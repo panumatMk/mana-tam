@@ -8,6 +8,7 @@ import VoteScreen from "./components/vote/VoteScreen.tsx";
 import TaskScreen from "./components/task/TaskScreen.tsx";
 import RandomWinnerModal from "./components/random/randomWinnerModal.tsx";
 import CostScreen from "./components/cost/CostScreen.tsx";
+import BillScreen from "./components/bill/BillScreen.tsx";
 
 interface User {
     name: string;
@@ -103,6 +104,8 @@ function App() {
                 {activeTab === 'task' && <TaskScreen />}
 
                 {activeTab === 'cost' && <CostScreen />}
+
+                {activeTab === 'bill' && <BillScreen />}
 
                 {/* หน้าอื่นๆ ที่ยังไม่ได้ทำ (Coming Soon) */}
                 {activeTab !== 'plan' && activeTab !== 'vote' && (
