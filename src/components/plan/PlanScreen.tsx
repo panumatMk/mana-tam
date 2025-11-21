@@ -17,10 +17,10 @@ import {
 } from '@dnd-kit/sortable';
 
 import { Plus, CalendarDays, Trash2, MapPin, Settings, Minus, Link as LinkIcon, GripVertical, X } from 'lucide-react';
-import type { Activity } from '../types';
-import ActivityModal from './ActivityModal';
-import ConfirmModal from './ConfirmModal';
-import { SortableItem } from './SortableItem';
+import type { Activity } from '../../types.ts';
+import ActivityModal from './ActivityModal.tsx';
+import ConfirmModal from './ConfirmModal.tsx';
+import { SortableItem } from '../SortableItem.tsx';
 
 interface PlanScreenProps {
     tripDate: string;

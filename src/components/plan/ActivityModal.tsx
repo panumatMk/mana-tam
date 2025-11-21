@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { X, Image as ImageIcon, Trash2, AlertCircle, Save, PlusCircle, Link as LinkIcon } from 'lucide-react'; // เพิ่ม LinkIcon
-import type { Activity } from '../types';
+import type { Activity } from '../../types.ts';
 
 interface ActivityModalProps {
     isOpen: boolean;
