@@ -1,33 +1,25 @@
-// 1. Import Font
+@import "tailwindcss";
 @import url('https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap');
 
-@import "tailwindcss";
-
-// 3. Custom SCSS styles
-// กำหนดตัวแปร (Optional)
-$font-stack: 'Prompt', sans-serif;
-$bg-color: #F3F4F6;
-
-body {
-  font-family: $font-stack;
-  background-color: $bg-color;
-
-  // ตัวอย่างการใช้ Nesting ของ SCSS (เผื่ออยากเขียน Custom เอง)
-  .app-container {
-    @apply min-h-screen flex flex-col; // ใช้ @apply ผสม Tailwind ได้
-
-    &.loading {
-      opacity: 0.5;
-    }
-  }
+/* --- GLOBAL RESET (สำคัญมาก แก้จอเด้ง) --- */
+html, body, #root {
+  height: 100%;           /* บังคับความสูงเต็มจอ */
+  width: 100%;
+  overflow: hidden;       /* ห้าม scroll ที่ตัวแม่เด็ดขาด */
+  overscroll-behavior: none; /* ป้องกันการดึงขอบจอ (Rubber banding) */
+  touch-action: pan-x pan-y;
+  font-family: 'Prompt', sans-serif;
+  background-color: #F3F4F6;
 }
 
-// ตัวอย่าง Animation แบบ SCSS
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+/* Custom Scrollbar (สวยๆ บางๆ) */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
 }
-
-.animate-fade-in {
-  animation: fadeIn 0.3s ease-out forwards;
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #d1d5db;
+  border-radius: 10px;
 }
