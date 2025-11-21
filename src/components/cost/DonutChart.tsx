@@ -10,19 +10,19 @@ interface Props {
 const DonutChart: React.FC<Props> = ({ expenses }) => {
     const total = expenses.reduce((sum, item) => sum + item.amount, 0);
 
-    // คำนวณยอดรวมแยกตามหมวดหมู่
     const categoryTotals = expenses.reduce((acc, item) => {
         acc[item.category] = (acc[item.category] || 0) + item.amount;
         return acc;
     }, {} as Record<CategoryType, number>);
 
-    // สร้าง String สำหรับ CSS Conic Gradient
     let gradientString = '';
     let currentDeg = 0;
 
-    Object.entries(categoryTotals).forEach(([cat, amount]) => {
+    // เรียงลำดับตามยอดเงิน (มาก -> น้อย) สีจะได้เรียงสวยๆ
+    const sortedCats = Object.entries(categoryTotals).sort((a, b) => b[1] - a[1]);
+
+    sortedCats.forEach(([cat, amount]) => {
         const percent = (amount / total) * 360;
-        // จุดที่ Error: ตรงนี้ต้องเรียก CATEGORIES ได้
         const color = CATEGORIES[cat as CategoryType]?.color || '#ccc';
         gradientString += `${color} ${currentDeg}deg ${currentDeg + percent}deg, `;
         currentDeg += percent;
@@ -33,32 +33,35 @@ const DonutChart: React.FC<Props> = ({ expenses }) => {
         : 'conic-gradient(#E5E7EB 0deg 360deg)';
 
     return (
-        <div className="bg-white p-6 rounded-3xl shadow-sm mb-4 flex flex-col items-center relative overflow-hidden">
+        <div className="bg-white p-4 rounded-3xl shadow-sm mb-2 flex gap-4 items-center border border-gray-100">
 
-            {/* Chart Circle */}
+            {/* Chart Circle (ลดขนาดลง) */}
             <div
-                className="w-48 h-48 rounded-full relative flex items-center justify-center transition-all duration-500"
+                className="w-32 h-32 rounded-full flex-shrink-0 relative flex items-center justify-center transition-all duration-500"
                 style={{ background: finalGradient }}
             >
-                <div className="w-36 h-36 bg-white rounded-full flex flex-col items-center justify-center z-10 shadow-inner">
-                    <span className="text-gray-400 text-xs font-bold uppercase tracking-wider">ยอดรวมทั้งหมด</span>
-                    <span className="text-3xl font-bold text-gray-800 mt-1">฿{total.toLocaleString()}</span>
+                <div className="w-24 h-24 bg-white rounded-full flex flex-col items-center justify-center z-10 shadow-inner">
+                    <span className="text-gray-400 text-[9px] font-bold uppercase tracking-wider">ยอดรวม</span>
+                    <span className="text-lg font-bold text-gray-800">฿{total.toLocaleString()}</span>
                 </div>
             </div>
 
-            {/* Legend */}
-            <div className="flex flex-wrap justify-center gap-3 mt-6 w-full">
-                {Object.entries(categoryTotals).map(([cat, amount]) => {
+            {/* Legend (จัด layout ใหม่ให้อยู่ขวามือ) */}
+            <div className="flex-1 flex flex-col gap-1.5 overflow-y-auto max-h-32 custom-scrollbar pr-1">
+                {sortedCats.map(([cat, amount]) => {
                     const category = CATEGORIES[cat as CategoryType];
                     if (!category) return null;
                     return (
-                        <div key={cat} className="flex items-center gap-1.5 bg-gray-50 px-2 py-1 rounded-lg border border-gray-100">
-                            <div className="w-2 h-2 rounded-full" style={{ backgroundColor: category.color }}></div>
-                            <span className="text-[10px] text-gray-500 font-bold">{category.label}</span>
-                            <span className="text-[10px] text-gray-800 font-bold">{(amount/total*100).toFixed(0)}%</span>
+                        <div key={cat} className="flex items-center justify-between text-xs">
+                            <div className="flex items-center gap-1.5">
+                                <div className="w-2 h-2 rounded-full" style={{ backgroundColor: category.color }}></div>
+                                <span className="text-gray-500 font-bold">{category.label}</span>
+                            </div>
+                            <span className="text-gray-800 font-bold">{Math.round((amount/total)*100)}%</span>
                         </div>
                     )
                 })}
+                {sortedCats.length === 0 && <div className="text-xs text-gray-300 italic">ยังไม่มีข้อมูล</div>}
             </div>
         </div>
     );
