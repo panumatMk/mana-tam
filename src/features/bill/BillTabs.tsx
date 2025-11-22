@@ -7,7 +7,7 @@ interface Props {
 
 const BillTabs: React.FC<Props> = ({ currentTab, onTabChange }) => {
     return (
-        <div className="flex bg-gray-200 p-1 rounded-xl mb-4">
+        <div className="flex bg-gray-200 p-1 rounded-xl mb-2">
             <button
                 onClick={() => onTabChange('ACTIVE')}
                 className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all ${currentTab === 'ACTIVE' ? 'bg-white shadow-sm text-blue-600' : 'text-gray-500'}`}

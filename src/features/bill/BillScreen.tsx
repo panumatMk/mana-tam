@@ -140,9 +140,9 @@ const BillScreen: React.FC = () => {
 
     return (
         <div className="h-full flex flex-col bg-F3F4F6 relative">
-            <div className="flex-none p-4 pb-2 bg-F3F4F6 z-10">
+            <div className="flex-none px-4 py-2 bg-F3F4F6 z-10">
                 <BillTabs currentTab={currentTab} onTabChange={setCurrentTab} />
-                <div className="flex gap-2 mb-4">
+                <div className="flex gap-2">
                     <div className="flex-1 relative">
                         <Search className="absolute top-2.5 left-3 w-4 h-4 text-gray-400" />
                         <input type="text" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} placeholder="ค้นหาบิล..." className="w-full bg-white border border-gray-200 pl-9 pr-3 py-2 rounded-xl text-xs outline-none focus:border-blue-500"/>
