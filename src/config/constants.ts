@@ -6,3 +6,4 @@ export const CURRENCY = "฿";
 export const MOCK_TRIP_NAME = "Japan 2025 🇯🇵";
 export const MOCK_TRIP_DATE = "20 - 25 Dec";
 export const DEFAULT_TRIP_DAYS = 5;
+export const MOCK_PARTICIPANTS = []

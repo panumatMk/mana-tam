@@ -58,12 +58,12 @@ export const ActivityModal: React.FC<Props> = ({ isOpen, onClose, onSave, initia
             <div className="space-y-5">
 
                 {/* Time & Title Row */}
-                <div className="flex gap-3">
-                    <div className="w-1/3">
+                <div>
+                    <div >
                         <label className="block text-[10px] font-bold text-gray-400 mb-1 uppercase">เวลา</label>
                         <input type="time" value={time} onChange={e => setTime(e.target.value)} className="w-full bg-gray-50 border border-gray-200 p-3 rounded-xl font-bold text-center outline-none focus:ring-2 ring-green-500/20 focus:bg-white transition-all" />
                     </div>
-                    <div className="w-2/3">
+                    <div>
                         <label className="block text-[10px] font-bold text-gray-400 mb-1 uppercase">กิจกรรม <span className="text-red-500">*</span></label>
                         <input type="text" value={title} onChange={e => setTitle(e.target.value)} className="w-full bg-white border-2 border-gray-100 p-3 rounded-xl font-bold outline-none focus:border-green-500 transition-all" placeholder="ทำอะไรดี?" autoFocus />
                     </div>

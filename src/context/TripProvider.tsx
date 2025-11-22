@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { INITIAL_TRIP, getTrip, setTrip } from '../services/trip.service';
-import type {Trip} from "../types/trip.types.ts"; // Import Service
+import type {Trip} from "../types/trip.types.ts";
+import type {User} from "../types/user.types.ts"; // Import Service
 
 // 1. กำหนด Type ของ Context ที่ส่งออกไป
 interface TripContextType {
@@ -11,7 +12,15 @@ interface TripContextType {
 }
 
 // 2. สร้าง Context และกำหนด Default Value
-const TripContext = createContext<TripContextType | undefined>(undefined);
+const TripContext = createContext<TripContextType>({
+    trip : {
+        title: '',
+        startDate: null,
+        endDate: null,
+        participants: []
+    },
+    isLoading: false
+});
 
 // Hook สำหรับดึง Context
 export const useTrip = () => {
