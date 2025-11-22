@@ -4,11 +4,11 @@ import { HamburgerDrawer } from './components/layout/HamburgerDrawer';
 import { RegistrationScreen } from './features/auth/RegistrationScreen';
 import { EditProfileModal } from './features/auth/EditProfileModal';
 import { PlanScreen } from './features/plan/PlanScreen';
-import { BillScreen } from './features/bill/BillScreen';
 import { EditTripModal } from './features/plan/EditTripModal';
 import type { User } from './types/user.types';
 import type { Trip } from './types/trip.types';
 import { MOCK_PARTICIPANTS } from './config/constants';
+import BillScreen from "./features/bill/BillScreen.tsx";
 
 // ค่าเริ่มต้นเมื่อยังไม่มีทริป
 const INITIAL_TRIP: Trip = {
