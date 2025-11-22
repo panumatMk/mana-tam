@@ -2,18 +2,7 @@
 // --- No Firebase/Firestore is used, only simple GET/SET actions. ---
 
 // --- TYPES (Minimal definitions) ---
-export interface User {
-    id: string;
-    name: string;
-    avatar: string;
-}
-
-export interface Trip {
-    title: string;
-    startDate: string;
-    endDate: string;
-    participants: User[];
-}
+import type {Trip} from "../types/trip.types.ts";
 
 // Initial Trip Data (ค่าเริ่มต้นเมื่อไม่มีข้อมูล)
 export const INITIAL_TRIP: Trip = {
@@ -29,8 +18,8 @@ const MOCK_SAVED_TRIP: Trip = {
     startDate: "2025-11-25",
     endDate: "2025-11-28",
     participants: [
-        { id: 'u1', name: 'Felix', avatar: '' },
-        { id: 'u2', name: 'Jane', avatar: '' },
+        {id: 'u1', name: 'Felix', avatar: ''},
+        {id: 'u2', name: 'Jane', avatar: ''},
     ],
 };
 
@@ -49,16 +38,14 @@ export const getTrip = (callback: (trip: Trip) => void): (() => void) => {
 
     if (storedTripString) {
         tripData = JSON.parse(storedTripString);
+
     } else {
         // หากไม่มีข้อมูลใน LocalStorage ให้ใช้ค่าเริ่มต้น (ว่างเปล่า)
         tripData = INITIAL_TRIP;
     }
 
     // จำลองการโหลดข้อมูลแบบ Asynchronous
-    setTimeout(() => {
-        console.log("SERVICE MOCK: Fetched trip data (local storage simulation).");
-        callback(tripData);
-    }, 100); // ดีเลย์ 100ms เพื่อจำลองการรอ API
+    callback(tripData);
 
     // Return function Mock สำหรับยกเลิกการเชื่อมต่อ
     return () => {

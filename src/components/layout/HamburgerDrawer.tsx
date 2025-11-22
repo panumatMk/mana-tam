@@ -1,5 +1,5 @@
 import React from 'react';
-import { X, LogOut, Edit2, Map, Receipt, Trash2 } from 'lucide-react';
+import {X, LogOut, Edit2, Map, Receipt, Trash2, ChevronLeft} from 'lucide-react';
 import type { User } from '../../types/user.types';
 
 interface Props {
@@ -38,9 +38,9 @@ export const HamburgerDrawer: React.FC<Props> = ({ isOpen, onClose, onNavigate, 
                 {/* Close Button */}
                 <button
                     onClick={onClose}
-                    className="absolute top-5 right-5 p-2 text-gray-400 hover:text-red-500 transition-colors z-20"
+                    className="absolute top-5 right-5 p-2 rounded-full text-gray-400 hover:text-gray-600 hover:bg-black/5 active:scale-90 transition-all duration-200 z-20"
                 >
-                    <X className="w-7 h-7" strokeWidth={2.5} />
+                    <ChevronLeft className="w-6 h-6" strokeWidth={3} />
                 </button>
 
                 {/* Profile Header (เพิ่มปุ่ม Edit) */}
