@@ -51,20 +51,17 @@ const BillScreen: React.FC = () => {
         // คำนวณหารยาว
         // data.debtors คือ array ของ userIds ที่ถูกเลือก
         // สูตร: ยอดรวม / จำนวนคนหาร (รวมคนจ่ายด้วยไหม? ในที่นี้สมมติว่า selectedUserIds คือทุกคนที่ต้องหาร)
-        const amountPerHead = data.totalAmount / data.debtors.length;
+        const createPayerList = (debtorsData: {userId: string, amount: number}[], existingDebtors: Payer[] = []): Payer[] => {
+            return debtorsData.map(d => {
+                const existing = existingDebtors.find(ex => ex.userId === d.userId);
 
-        const createPayerList = (userIds: string[], existingDebtors: Payer[] = []): Payer[] => {
-            return userIds.map(uid => {
-                const existing = existingDebtors.find(d => d.userId === uid);
-
-                // ✨ LOGIC ใหม่: ถ้าเป็นคนสร้างบิล (Me / u1) ให้ถือว่าจ่ายแล้ว (VERIFIED) ทันที
-                // หรือถ้ามีสถานะเดิมอยู่แล้วก็ใช้สถานะเดิม
+                // Logic เดิม: เจ้าของบิลจ่ายแล้วเสมอ
                 let status: PayerStatus = existing ? existing.status : PayerStatus.UNPAID;
-                if (uid === 'u1') status = PayerStatus.VERIFIED; // <-- AUTO VERIFY MYSELF
+                if (d.userId === 'u1') status = PayerStatus.VERIFIED;
 
                 return {
-                    userId: uid,
-                    amount: amountPerHead,
+                    userId: d.userId,
+                    amount: d.amount, // ✅ ใช้ amount ที่ส่งมาจาก Modal ได้เลย
                     status: status,
                     slipUrl: existing?.slipUrl
                 };
