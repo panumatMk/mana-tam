@@ -1,8 +1,8 @@
-import React from 'react';
-import { Menu, Calendar, PenLine } from 'lucide-react';
-import type { User } from '../../types/user.types';
-import type { Trip } from '../../types/trip.types';
-import { APP_NAME } from '../../config/constants';
+import React, {useState} from 'react';
+import {Menu, Calendar, PenLine} from 'lucide-react';
+import type {User} from '../../types/user.types';
+import type {Trip} from '../../types/trip.types';
+import {APP_NAME} from '../../config/constants';
 
 interface Props {
     user: User;
@@ -45,6 +45,44 @@ export const Header: React.FC<Props> = ({
 
     const daysLeft = getDaysLeft();
 
+    function formatDateRangeWithYear(startDateString: string, endDateString: string) {
+        // แปลง string เป็น object Date
+        const startDate = new Date(startDateString);
+        const endDate = new Date(endDateString);
+
+        // Array ของชื่อเดือนแบบย่อ
+        const monthNames = [
+            'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+            'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+        ];
+
+        // ดึงข้อมูลวันที่
+        const startDay = startDate.getDate();
+        const startMonthIndex = startDate.getMonth();
+        const startMonth = monthNames[startMonthIndex];
+        const startYear = startDate.getFullYear();
+
+        const endDay = endDate.getDate();
+        const endMonthIndex = endDate.getMonth();
+        const endMonth = monthNames[endMonthIndex];
+        const endYear = endDate.getFullYear();
+
+        // 1. ตรวจสอบว่า "ปีเดียวกัน" หรือไม่
+        if (startYear === endYear) {
+            // 1.1. ตรวจสอบว่า "เดือนเดียวกัน"
+            if (startMonthIndex === endMonthIndex) {
+                // Logic 1: เดือนเดียวกัน (26-28 Nov) -> ไม่ต้องแสดงปี
+                return `${startDay} - ${endDay} ${startMonth} ${endYear}`;
+            } else {
+                // Logic 2: คนละเดือนแต่ปีเดียวกัน (28 Nov - 1 Dec) -> ไม่ต้องแสดงปี
+                return `${startDay} ${startMonth} - ${endDay} ${endMonth} ${endYear}`;
+            }
+        } else {
+            // 2. Logic 3: คนละปี (28 Dec 2025 - 1 Jan 2026) -> แสดงปีทั้งหมด
+            return `${startDay} ${startMonth} ${startYear} - ${endDay} ${endMonth} ${endYear}`;
+        }
+    }
+
     // === MINIMIZED MODE (แสดงตอนเลื่อนลง หรืออยู่แท็บอื่น) ===
     if (isMinimized) {
         return (
@@ -54,14 +92,15 @@ export const Header: React.FC<Props> = ({
                         onClick={onMenuClick}
                         className="p-2 -ml-2 text-gray-600 hover:bg-gray-100 rounded-full transition-colors"
                     >
-                        <Menu className="w-6 h-6" />
+                        <Menu className="w-6 h-6"/>
                     </button>
                     <h1 className="text-lg font-bold text-gray-800">{activeTabLabel || APP_NAME}</h1>
                 </div>
 
                 {/* แสดงรูป Profile เล็กๆ */}
                 <div className="flex items-center gap-2">
-                    <img src={user.avatar} className="w-8 h-8 rounded-full border border-gray-200 object-cover" alt="avatar"/>
+                    <img src={user.avatar} className="w-8 h-8 rounded-full border border-gray-200 object-cover"
+                         alt="avatar"/>
                 </div>
             </div>
         );
@@ -76,7 +115,7 @@ export const Header: React.FC<Props> = ({
                         onClick={onMenuClick}
                         className="p-2 -ml-2 text-gray-600 hover:bg-gray-100 rounded-full transition-colors"
                     >
-                        <Menu className="w-6 h-6" />
+                        <Menu className="w-6 h-6"/>
                     </button>
 
                     {/* Title & Edit Button */}
@@ -89,7 +128,7 @@ export const Header: React.FC<Props> = ({
                                 onClick={onEdit}
                                 className="p-1.5 rounded-full bg-gray-50 text-gray-400 hover:text-green-600 hover:bg-green-50 transition-colors"
                             >
-                                <PenLine className="w-4 h-4" />
+                                <PenLine className="w-4 h-4"/>
                             </button>
                         </div>
 
@@ -97,7 +136,7 @@ export const Header: React.FC<Props> = ({
                         {isTripSetup && (
                             <div className="flex items-center gap-1 mt-1 text-gray-500 text-xs font-medium">
                                 <span className="w-2 h-2 rounded-full bg-green-500"></span>
-                                <p>{trip.startDate} - {trip.endDate}</p>
+                                <p>{formatDateRangeWithYear(trip.startDate, trip.endDate)}</p>
                             </div>
                         )}
                     </div>
@@ -105,12 +144,14 @@ export const Header: React.FC<Props> = ({
 
                 {/* Countdown Badge */}
                 {isTripSetup && (
-                    <div className={`px-3 py-1.5 rounded-xl border text-center min-w-[60px] ${daysLeft >= 0 ? 'bg-green-50 text-green-700 border-green-100' : 'bg-gray-100 text-gray-500 border-gray-200'}`}>
+                    <div
+                        className={`px-3 py-1.5 rounded-xl border text-center min-w-[60px] ${daysLeft >= 0 ? 'bg-green-50 text-green-700 border-green-100' : 'bg-gray-100 text-gray-500 border-gray-200'}`}>
                 <span className="block text-[8px] uppercase opacity-60 font-bold tracking-wider">
                     {daysLeft > 0 ? 'Coming in' : (daysLeft === 0 ? 'Today!' : 'Ended')}
                 </span>
                         {daysLeft > 0 && (
-                            <span className="text-sm font-extrabold">{daysLeft} <span className="text-[9px] font-normal">Days</span></span>
+                            <span className="text-sm font-extrabold">{daysLeft} <span
+                                className="text-[9px] font-normal">Days</span></span>
                         )}
                     </div>
                 )}
@@ -124,7 +165,7 @@ export const Header: React.FC<Props> = ({
                             key={p.id}
                             src={p.avatar}
                             className="inline-block h-8 w-8 rounded-full ring-2 ring-white object-cover bg-gray-100"
-                            style={{ zIndex: 10 - index }}
+                            style={{zIndex: 10 - index}}
                             alt={p.name}
                         />
                     ))}
@@ -133,3 +174,4 @@ export const Header: React.FC<Props> = ({
         </div>
     );
 };
+
