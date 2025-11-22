@@ -85,7 +85,10 @@ function App() {
                 activeScreen={screen}
                 user={user}
                 onLogout={() => {}}
-                onEditProfile={() => setIsProfileEditOpen(true)}
+                onEditProfile={() => {
+                    setIsDrawerOpen(false); // ปิด Drawer ก่อน
+                    setTimeout(() => setIsProfileEditOpen(true), 200); // รอแป๊บนึงแล้วค่อยเปิด Modal (Animation จะได้นุ่ม)
+                }}
             />
 
             <EditTripModal

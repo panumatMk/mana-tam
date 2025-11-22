@@ -1,5 +1,6 @@
 import React from 'react';
 import { X } from 'lucide-react';
+import {CloseButton} from "./CloseButton.tsx";
 
 interface ModalProps {
     isOpen: boolean;
@@ -17,9 +18,7 @@ export const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children, 
             {/* Header */}
             <div className="flex-none px-5 py-4 border-b border-gray-100 flex justify-between items-center bg-white">
                 <h2 className="text-lg font-bold text-gray-800">{title}</h2>
-                <button onClick={onClose} className="bg-gray-100 p-2 rounded-full text-gray-500 hover:bg-gray-200 transition-colors">
-                    <X className="w-5 h-5"/>
-                </button>
+                <CloseButton onClick={onClose} />
             </div>
 
             {/* Content (Scrollable) */}
