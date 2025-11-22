@@ -108,7 +108,7 @@ export const Header: React.FC<Props> = ({
 
     // === FULL MODE (หน้าแรก) ===
     return (
-        <div className="flex-none bg-white p-2 shadow-sm z-20 transition-all duration-300">
+        <div className="flex-none bg-white p-2 shadow-sm z-20 transition-all duration-300 px-5">
             <div className="flex justify-between items-start mb-2">
                 <div className="flex items-center gap-3">
                     <button
