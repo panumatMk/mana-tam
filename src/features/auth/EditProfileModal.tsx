@@ -93,8 +93,8 @@ export const EditProfileModal: React.FC<Props> = ({ isOpen, onClose, currentUser
             title="ปรับลุคใหม่ ✨"
             footer={footer}
         >
-            {/* Animation: Flip เหรียญ (เร็วหน่อยให้ดูไม่ออกว่าเป็นรูปเดิม) */}
-            <style>{`
+        {/* Animation: Flip เหรียญ (เร็วหน่อยให้ดูไม่ออกว่าเป็นรูปเดิม) */}
+        <style>{`
             @keyframes flip-vertical-fast {
                 0% { transform: perspective(400px) rotateY(0deg); }
                 100% { transform: perspective(400px) rotateY(360deg); }

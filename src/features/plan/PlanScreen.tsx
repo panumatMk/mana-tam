@@ -32,9 +32,22 @@ export const PlanScreen: React.FC = () => {
 
     return (
         <div className="flex flex-col h-full bg-F3F4F6 relative">
+            <style>{`
+                .hide-scrollbar {
+                    /* สำหรับ Firefox */
+                    scrollbar-width: none;
+                    /* สำหรับ IE/Edge Legacy */
+                    -ms-overflow-style: none;
+                }
+                
+                /* สำหรับ Chrome, Safari, Edge (Chromium) */
+                .hide-scrollbar::-webkit-scrollbar {
+                    display: none;
+                }
+            `}</style>
 
             {/* Day Tabs (Scrollable) */}
-            <div className="flex-none px-4 py-3 bg-white border-b border-gray-100 overflow-x-auto custom-scrollbar flex gap-2 sticky top-0 z-10 shadow-sm">
+            <div className="flex-none px-4 py-3 bg-white border-b border-gray-100 overflow-x-auto custom-scrollbar flex gap-2 sticky top-0 z-10 shadow-sm hide-scrollbar">
                 {days.map(day => (
                     <button
                         key={day}
