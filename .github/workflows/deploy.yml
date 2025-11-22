@@ -28,6 +28,7 @@ jobs:
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
+          # ตัวนี้ต้องมีสิทธิ์ Write Access
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist # บอกว่าให้ Deploy โฟลเดอร์ 'dist'
-          publish_branch: gh-pages # Deploy ไปที่ branch 'gh-pages'
+          publish_dir: ./dist
+          publish_branch: gh-pages
