@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import { Save } from 'lucide-react';
 import { Modal } from '../../components/common/Modal'; // ใช้ Modal กลาง
 
@@ -9,10 +9,17 @@ interface Props {
 }
 
 export const ActivityModal: React.FC<Props> = ({ isOpen, onClose, onSave }) => {
-    const [time, setTime] = useState('09:00');
+    const [time, setTime] = useState('08:00');
     const [title, setTitle] = useState('');
     const [note, setNote] = useState('');
     const [link, setLink] = useState('');
+
+    useEffect(() => {
+        if (isOpen) {
+            setTime('08:00'); // Reset เป็น 8 โมง
+            // ...
+        }
+    }, [isOpen]);
 
     // Footer Content
     const footerContent = (

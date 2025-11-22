@@ -5,4 +5,5 @@ export interface Activity {
     title: string;
     note?: string;
     link?: string;
+    links?: string[];
 }

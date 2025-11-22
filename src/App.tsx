@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Header } from './components/layout/Header';
 import { HamburgerDrawer } from './components/layout/HamburgerDrawer';
 import { RegistrationScreen } from './features/auth/RegistrationScreen';
@@ -92,7 +92,7 @@ function App() {
             />
 
             <div className="flex-1 relative overflow-hidden">
-                {screen === 'plan' ? <PlanScreen /> : <BillScreen />}
+                {screen === 'plan' ? <PlanScreen trip={trip} onSaveTrip={(trip) => handleSaveTrip(trip)}/> : <BillScreen />}
             </div>
 
             <HamburgerDrawer
