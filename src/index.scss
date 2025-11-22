@@ -23,3 +23,19 @@ html, body, #root {
   background-color: #d1d5db;
   border-radius: 10px;
 }
+
+.hide-scrollbar-completely {
+  overflow-x: auto; /* ทำให้เนื้อหาเลื่อนได้ */
+
+  /* เปิดใช้งานการเลื่อนแบบลื่นไหล (Touch Scrolling) บน iOS/Safari */
+  -webkit-overflow-scrolling: touch;
+
+  /* ซ่อน Scrollbar สำหรับ IE/Edge/Firefox */
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+
+  /* ซ่อน Scrollbar สำหรับ Webkit (Chrome/Safari) */
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
