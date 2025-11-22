@@ -1,0 +1,32 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - master # หรือ main ขึ้นอยู่กับชื่อ branch หลักของคุณ
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18 # ใช้ Node version ที่เข้ากันได้กับ Vite
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build project (npm run build)
+        run: npm run build
+
+      # 💡 Deploy to gh-pages branch
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist # บอกว่าให้ Deploy โฟลเดอร์ 'dist'
+          publish_branch: gh-pages # Deploy ไปที่ branch 'gh-pages'
