@@ -18,7 +18,7 @@ export const ActivityModal: React.FC<Props> = ({ isOpen, onClose, onSave, initia
     // Multiple Links State
     const [links, setLinks] = useState<LinkItem[]>([]);
     const [newLinkUrl, setNewLinkUrl] = useState('');
-    const [newLinkType, setNewLinkType] = useState<'url' | 'map'>('map');
+    const [newLinkType, setNewLinkType] = useState<'url' | 'map'>('url');
 
     // Reset or Load Data
     useEffect(() => {
@@ -95,8 +95,12 @@ export const ActivityModal: React.FC<Props> = ({ isOpen, onClose, onSave, initia
                     {/* Add Link Input */}
                     <div className="flex gap-2">
                         <div className="flex bg-white rounded-lg border border-gray-200 p-1 shadow-sm">
-                            <button onClick={() => setNewLinkType('map')} className={`p-2 rounded-md transition-all ${newLinkType === 'map' ? 'bg-red-50 text-red-500 shadow-sm' : 'text-gray-400 hover:bg-gray-50'}`}><MapPin className="w-4 h-4"/></button>
-                            <button onClick={() => setNewLinkType('url')} className={`p-2 rounded-md transition-all ${newLinkType === 'url' ? 'bg-blue-50 text-blue-500 shadow-sm' : 'text-gray-400 hover:bg-gray-50'}`}><LinkIcon className="w-4 h-4"/></button>
+                            <button onClick={() => setNewLinkType('url')}
+                                    className={`p-2 rounded-md transition-all ${newLinkType === 'url' ? 'bg-blue-50 text-blue-500 shadow-sm' : 'text-gray-400 hover:bg-gray-50'}`}>
+                                <LinkIcon className="w-4 h-4"/></button>
+                            <button onClick={() => setNewLinkType('map')}
+                                    className={`p-2 rounded-md transition-all ${newLinkType === 'map' ? 'bg-red-50 text-red-500 shadow-sm' : 'text-gray-400 hover:bg-gray-50'}`}>
+                                <MapPin className="w-4 h-4"/></button>
                         </div>
                         <input
                             type="text"
