@@ -11,17 +11,21 @@ interface Props {
 }
 
 export const EditTripModal: React.FC<Props> = ({ isOpen, onClose, onSave, initialTrip }) => {
-    const [title, setTitle] = useState(initialTrip?.title);
-    const [startDate, setStartDate] = useState(initialTrip?.startDate);
-    const [endDate, setEndDate] = useState(initialTrip?.endDate);
+    const [title, setTitle] = useState(initialTrip.title);
+    const [startDate, setStartDate] = useState(initialTrip.startDate);
+    const [endDate, setEndDate] = useState(initialTrip.endDate);
 
     const [formErrors, setFormErrors] = useState<{ title?: string; startDate?: string; endDate?: string }>({});
 
-    const getTodayDate = () => new Date().toISOString().split('T')[0];
+    // Helper: วันนี้ (YYYY-MM-DD)
+    const getTodayDate = () => {
+        return new Date().toISOString().split('T')[0];
+    };
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
 
+        // --- VALIDATION LOGIC ---
         const errors: { title?: string; startDate?: string; endDate?: string } = {};
         let hasError = false;
         const today = getTodayDate();
@@ -46,16 +50,17 @@ export const EditTripModal: React.FC<Props> = ({ isOpen, onClose, onSave, initia
             title: title.trim(),
             startDate: startDate,
             endDate: endDate,
-            participants: initialTrip?.participants || []
+            participants: initialTrip.participants
         };
 
         onSave(newTrip);
         setFormErrors({});
     };
 
+    // Footer Button (Emoji 💾)
     const footerContent = (
         <button type="submit" form="edit-trip-form" className="w-full bg-green-600 text-white font-bold py-3.5 rounded-2xl shadow-lg flex items-center justify-center gap-2 active:scale-95 transition-all text-base hover:bg-green-700">
-            <span className="text-lg">💾</span> บันทึกทริป
+            <span className="text-lg">💾</span> บันทึกข้อมูล
         </button>
     );
 
@@ -63,6 +68,7 @@ export const EditTripModal: React.FC<Props> = ({ isOpen, onClose, onSave, initia
         <Modal isOpen={isOpen} onClose={onClose} title="ตั้งค่าทริป ✈️" footer={footerContent}>
             <form id="edit-trip-form" onSubmit={handleSubmit} className="space-y-6 py-2">
 
+                {/* Title Input */}
                 <div>
                     <label className="block text-[10px] font-bold text-gray-400 mb-1.5 uppercase tracking-widest">ชื่อทริป <span className="text-red-500">*</span></label>
                     <input
@@ -77,11 +83,13 @@ export const EditTripModal: React.FC<Props> = ({ isOpen, onClose, onSave, initia
                     {formErrors.title && <div className="flex items-center gap-1 mt-2 text-red-500 text-[10px] font-bold animate-pulse"><AlertCircle className="w-3 h-3" />{formErrors.title}</div>}
                 </div>
 
+                {/* Date Inputs */}
                 <div className="grid grid-cols-2 gap-4">
                     <div>
                         <label className="block text-[10px] font-bold text-gray-400 mb-1.5 uppercase tracking-widest">วันไป <span className="text-red-500">*</span></label>
                         <input
-                            name="startDate" type="date"
+                            name="startDate"
+                            type="date"
                             value={startDate === 'TBD' ? '' : startDate}
                             min={getTodayDate()}
                             onChange={(e) => {setStartDate(e.target.value); setFormErrors({...formErrors, startDate: undefined});}}
@@ -92,7 +100,8 @@ export const EditTripModal: React.FC<Props> = ({ isOpen, onClose, onSave, initia
                     <div>
                         <label className="block text-[10px] font-bold text-gray-400 mb-1.5 uppercase tracking-widest">วันกลับ <span className="text-red-500">*</span></label>
                         <input
-                            name="endDate" type="date"
+                            name="endDate"
+                            type="date"
                             value={endDate === 'TBD' ? '' : endDate}
                             min={startDate !== 'TBD' ? startDate : getTodayDate()}
                             onChange={(e) => {setEndDate(e.target.value); setFormErrors({...formErrors, endDate: undefined});}}

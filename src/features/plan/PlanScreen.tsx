@@ -1,11 +1,8 @@
 import React, { useState } from 'react';
-import {Plus, Calendar, MapPin, Trash2, Link as LinkIcon, Settings, Minus, GripVertical} from 'lucide-react';
+import {Plus, Calendar, MapPin, Trash2, Link as LinkIcon, Settings, Minus, GripVertical, X} from 'lucide-react';
 import type { Activity, Trip } from '../../types/plan.types';
 import { ActivityModal } from './ActivityModal';
 import { EditTripModal } from './EditTripModal';
-// import ConfirmModal from './ConfirmModal';
-// หรือถ้า SortableItem อยู่ในไฟล์เดียวกัน ให้ uncomment บรรทัดข้างล่าง
-// import { SortableItem } from './SortableItem';
 
 import {
     DndContext,
@@ -23,7 +20,8 @@ import {
     horizontalListSortingStrategy,
     verticalListSortingStrategy
 } from '@dnd-kit/sortable';
-import {SortableItem} from "../../components/common/SorttableItem.tsx";
+import ConfirmModal from "../../components/common/ConfirmModal.tsx";
+import { SortableItem } from '../../components/common/SorttableItem.tsx';
 
 interface PlanScreenProps {
     trip: Trip;
@@ -47,8 +45,7 @@ export const PlanScreen: React.FC<PlanScreenProps> = ({ trip, onSaveTrip }) => {
     const [tempDayCount, setTempDayCount] = useState(days.length);
 
     // Logic: ตรวจสอบว่าทริปถูกตั้งค่าหรือยัง (title ไม่ว่าง)
-    // const isTripSetup = trip.title !== "";
-    const isTripSetup = false;
+    const isTripSetup = trip.title !== "";
 
     // Sensors for Drag & Drop
     const sensors = useSensors(
@@ -135,11 +132,6 @@ export const PlanScreen: React.FC<PlanScreenProps> = ({ trip, onSaveTrip }) => {
         .filter(a => a.day === activeDay)
         .sort((a, b) => a.time.localeCompare(b.time));
 
-    const onSave = (trip: Trip) => {
-        setIsTripModalOpen(false);
-        onSaveTrip(trip);
-    }
-
     // --- 1. EMPTY STATE (ยังไม่สร้างทริป) ---
     if (!isTripSetup) {
         return (
@@ -166,7 +158,7 @@ export const PlanScreen: React.FC<PlanScreenProps> = ({ trip, onSaveTrip }) => {
                 <EditTripModal
                     isOpen={isTripModalOpen}
                     onClose={() => setIsTripModalOpen(false)}
-                    onSave={onSave}
+                    onSave={onSaveTrip}
                     initialTrip={trip}
                 />
             </div>
@@ -194,7 +186,6 @@ export const PlanScreen: React.FC<PlanScreenProps> = ({ trip, onSaveTrip }) => {
                     <SortableContext items={days} strategy={horizontalListSortingStrategy}>
                         <div className="flex gap-2 overflow-x-auto pb-2 no-scrollbar touch-pan-x p-1">
                             {days.map((dayId, index) => (
-                                // Note: ต้องมั่นใจว่ามี SortableItem component
                                 <SortableItem key={dayId} id={dayId} className="flex-shrink-0">
                                     <button
                                         onClick={() => setActiveDay(dayId)}
@@ -299,15 +290,15 @@ export const PlanScreen: React.FC<PlanScreenProps> = ({ trip, onSaveTrip }) => {
                 initialData={editingActivity}
             />
 
-            {/*<ConfirmModal*/}
-            {/*    isOpen={isDeleteModalOpen}*/}
-            {/*    onClose={() => setIsDeleteModalOpen(false)}*/}
-            {/*    onConfirm={handleDeleteActivity}*/}
-            {/*    title="ลบกิจกรรม?"*/}
-            {/*    message="ลบแล้วหายเลยนะ กู้คืนไม่ได้ เอาจริงดิ?"*/}
-            {/*/>*/}
+            <ConfirmModal
+                isOpen={isDeleteModalOpen}
+                onClose={() => setIsDeleteModalOpen(false)}
+                onConfirm={handleDeleteActivity}
+                title="ลบกิจกรรม?"
+                message="ลบแล้วหายเลยนะ กู้คืนไม่ได้ เอาจริงดิ?"
+            />
 
-            {/* Manage Days Modal (เหมือนเดิม) */}
+            {/* Manage Days Modal */}
             {isManageDaysOpen && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-6 animate-fade-in">
                     <div className="bg-white w-full max-w-xs rounded-3xl p-6 shadow-2xl relative text-center">
@@ -319,10 +310,14 @@ export const PlanScreen: React.FC<PlanScreenProps> = ({ trip, onSaveTrip }) => {
                             <div className="text-4xl font-bold text-gray-800 w-16">{tempDayCount}</div>
                             <button onClick={() => setTempDayCount(tempDayCount + 1)} className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-green-100 hover:text-green-600 active:scale-90"><Plus className="w-6 h-6" /></button>
                         </div>
-                        <button onClick={handleUpdateDays} className="w-full bg-gray-800 text-white font-bold py-3 rounded-xl shadow-lg hover:bg-black active:scale-95 transition-all">บันทึก</button>
+                        <div className="flex gap-2">
+                            <button onClick={() => setIsManageDaysOpen(false)} className="flex-1 bg-gray-100 text-gray-500 font-bold py-3 rounded-xl">ยกเลิก</button>
+                            <button onClick={handleUpdateDays} className="flex-1 bg-green-600 text-white font-bold py-3 rounded-xl shadow-lg">บันทึก</button>
+                        </div>
                     </div>
                 </div>
             )}
+
         </div>
     );
 };
