@@ -33,6 +33,7 @@ import {
     verticalListSortingStrategy
 } from '@dnd-kit/sortable';
 import {SortableItem} from "../../components/common/SorttableItem.tsx";
+import './../../styles/cute-scrollbar.scss';
 
 interface PlanScreenProps {
     trip: Trip;
@@ -153,7 +154,7 @@ export const PlanScreen: React.FC<PlanScreenProps> = ({ trip, onSaveTrip }) => {
                 {/* DRAGGABLE DAY TABS */}
                 <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragDayEnd}>
                     <SortableContext items={days} strategy={horizontalListSortingStrategy}>
-                        <div className="flex gap-2 pb-2 no-scrollbar touch-pan-x p-1 flex-wrap">
+                        <div className="flex gap-2 pb-2 no-scrollbar touch-pan-x p-1 overflow-x-auto cute-scrollbar">
                             {days.map((dayId, index) => (
                                 <SortableItem key={dayId} id={dayId} className="flex-shrink-0">
                                     <button
