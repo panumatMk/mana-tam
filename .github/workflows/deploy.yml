@@ -15,7 +15,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 18 # ใช้ Node version ที่เข้ากันได้กับ Vite
+          node-version: 20 # 🔥 FIX: เปลี่ยนเป็น 20 หรือ 22 เพื่อรองรับ Vite และ Rolldown
+          cache: 'npm'
 
       - name: Install dependencies
         run: npm install
