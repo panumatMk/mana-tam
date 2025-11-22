@@ -1,14 +1,13 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react-swc';
 
-// ดึงชื่อ Repository จาก URL ของ Git (สมมติว่าชื่อ repo คือ my-travel-app)
-// **FIX THIS:** กรุณาเปลี่ยน 'my-travel-app' เป็นชื่อ Repository จริงของคุณ
-const repoName = 'my-travel-app';
+// FIX: ใช้ชื่อ Repository ของคุณ
+const repoName = 'mana-tam';
 
 export default defineConfig({
   plugins: [react()],
 
-  // 💡 สำคัญ: ตั้งค่า Base Path เพื่อให้ Vite รู้ว่าไฟล์จะอยู่ใต้ /repo-name/
+  // 💡 FIX 1: ตั้งค่า Base Path ให้ชี้ไปที่ชื่อ Repository
   base: `/${repoName}/`,
 
   server: {
@@ -17,7 +16,7 @@ export default defineConfig({
   },
 
   build: {
-    outDir: 'dist', // โฟลเดอร์ที่ Build เสร็จแล้วจะไปอยู่
+    outDir: 'dist',
     sourcemap: true,
   },
 });
