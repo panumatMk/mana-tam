@@ -9,7 +9,7 @@ export default defineConfig({
   server: {
     // 1. อนุญาตให้ ngrok Host นี้เข้าถึงได้
     allowedHosts: [
-      '86f96c3aabec.ngrok-free.app',
+      '38c565627855.ngrok-free.app',
       'localhost',
       '127.0.0.1',
       // *เพิ่ม Wildcard เพื่อกัน Host เปลี่ยนในการรันครั้งหน้า*
