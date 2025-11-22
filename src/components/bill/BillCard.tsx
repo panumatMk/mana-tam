@@ -1,27 +1,44 @@
-import React, { useState } from 'react';
-import { ChevronDown, ChevronUp, Copy, CheckCircle2, Clock, Image as ImageIcon } from 'lucide-react';
-import type { BillItem, Payer, User } from './types';
+import React, { useState, useRef } from 'react';
+import { ChevronDown, ChevronUp, Copy, CheckCircle2, Clock, Image as ImageIcon, Edit3, Upload, XCircle } from 'lucide-react';
+import type { BillItem, User } from './types';
+import ImagePreviewModal from "./ImagePreviewModal.tsx";
 
 interface Props {
     bill: BillItem;
+    currentUser: User;
     allUsers: User[];
     isOpen: boolean;
     onToggle: () => void;
-    onVerifySlip: (billId: string, payerId: string) => void;
+    onVerifySlip: (billId: string, payerId: string, isApproved: boolean) => void;
+    onUploadSlip: (billId: string, file: File) => void;
+    onEdit: () => void;
 }
 
-const BillCard: React.FC<Props> = ({ bill, allUsers, isOpen, onToggle, onVerifySlip }) => {
+const BillCard: React.FC<Props> = ({ bill, currentUser, allUsers, isOpen, onToggle, onVerifySlip, onUploadSlip, onEdit }) => {
 
-    // Logic เรียงลำดับ: UNPAID -> SLIP_SENT -> VERIFIED
+    const fileInputRef = useRef<HTMLInputElement>(null);
+
+    // State สำหรับ Image Preview
+    const [previewImage, setPreviewImage] = useState<{ url: string; title: string; showDownload: boolean } | null>(null);
+
     const sortedDebtors = [...bill.debtors].sort((a, b) => {
-        const score = { UNPAID: 1, SLIP_SENT: 2, VERIFIED: 3 };
+        const score = { SLIP_SENT: 1, UNPAID: 2, REJECTED: 2, VERIFIED: 3 };
         return score[a.status] - score[b.status];
     });
 
-    // นับจำนวน
     const paidCount = bill.debtors.filter(d => d.status === 'VERIFIED').length;
     const totalCount = bill.debtors.length;
-    const amountPerPerson = bill.totalAmount / totalCount;
+    const amIHost = bill.payerId === currentUser.id;
+
+    const handleOpenQR = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        setPreviewImage({ url: bill.paymentValue, title: 'QR Code รับเงิน', showDownload: true });
+    };
+
+    const handleOpenSlip = (e: React.MouseEvent, url: string, userName: string) => {
+        e.stopPropagation();
+        setPreviewImage({ url: url, title: `สลิปของ ${userName}`, showDownload: true });
+    };
 
     const handleCopy = (e: React.MouseEvent) => {
         e.stopPropagation();
@@ -29,98 +46,140 @@ const BillCard: React.FC<Props> = ({ bill, allUsers, isOpen, onToggle, onVerifyS
         alert('คัดลอกเลขบัญชีแล้ว!');
     };
 
-    return (
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden mb-3 transition-all">
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files[0]) {
+            onUploadSlip(bill.id, e.target.files[0]);
+        }
+    };
 
-            {/* HEADER (Click to Expand) */}
-            <div onClick={onToggle} className="p-4 cursor-pointer active:bg-gray-50">
-                <div className="flex justify-between items-start mb-2">
-                    <div>
-                        <h4 className="font-bold text-gray-800 text-base">{bill.title}</h4>
-                        <div className="flex items-center gap-2 text-xs text-gray-400 mt-1">
-                            <span>จ่ายโดย You</span>
-                            <span className="w-1 h-1 rounded-full bg-gray-300"></span>
-                            <span className={`${paidCount === totalCount ? 'text-green-500 font-bold' : ''}`}>เก็บแล้ว {paidCount}/{totalCount} คน</span>
+    return (
+        <>
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden mb-3 transition-all relative group">
+
+                {amIHost && (
+                    <button onClick={(e) => { e.stopPropagation(); onEdit(); }} className="absolute top-3 right-3 text-gray-300 hover:text-blue-500 p-1 z-10">
+                        <Edit3 className="w-4 h-4" />
+                    </button>
+                )}
+
+                {/* HEADER */}
+                <div onClick={onToggle} className="p-4 cursor-pointer active:bg-gray-50">
+                    <div className="flex justify-between items-start mb-2 pr-6">
+                        <div>
+                            <h4 className="font-bold text-gray-800 text-base">{bill.title}</h4>
+                            <div className="flex items-center gap-2 text-xs text-gray-400 mt-1">
+                                <span>จ่ายให้: {allUsers.find(u => u.id === bill.payerId)?.name || 'Unknown'}</span>
+                                <span className={`ml-2 ${paidCount === totalCount ? 'text-green-500 font-bold' : ''}`}>
+                          เก็บแล้ว {paidCount}/{totalCount}
+                      </span>
+                            </div>
+                        </div>
+                        <div className="text-right">
+                            <div className="text-lg font-bold text-blue-600">฿{bill.totalAmount.toLocaleString()}</div>
                         </div>
                     </div>
-                    <div className="text-right">
-                        <div className="text-lg font-bold text-blue-600">฿{bill.totalAmount.toLocaleString()}</div>
-                        <div className="text-[10px] text-gray-400">ตกคนละ {Math.ceil(amountPerPerson).toLocaleString()}</div>
+
+                    <div className="flex items-center justify-between mt-3 pt-3 border-t border-dashed border-gray-100">
+                        <div className="flex items-center gap-2 text-xs text-gray-500">
+                            {bill.paymentType === 'QR' ? (
+                                <button
+                                    onClick={handleOpenQR} // เปิด Modal QR
+                                    className="flex items-center gap-1 bg-blue-50 text-blue-600 px-3 py-1.5 rounded-lg font-bold hover:bg-blue-100 transition-colors"
+                                >
+                                    <ImageIcon className="w-3 h-3"/>
+                                    <span>ดู QR Code</span>
+                                </button>
+                            ) : (
+                                <button onClick={handleCopy} className="flex items-center gap-1 bg-orange-50 text-orange-600 px-3 py-1.5 rounded-lg font-bold hover:bg-orange-100 transition-colors">
+                                    <Copy className="w-3 h-3"/><span>{bill.paymentValue}</span>
+                                </button>
+                            )}
+                        </div>
+                        <div className="text-gray-300">
+                            {isOpen ? <ChevronUp className="w-5 h-5"/> : <ChevronDown className="w-5 h-5"/>}
+                        </div>
                     </div>
                 </div>
 
-                {/* Payment Info Bar (Visible when expanded or always visible? Let's show mini info) */}
-                <div className="flex items-center justify-between mt-3 pt-3 border-t border-dashed border-gray-100">
-                    <div className="flex items-center gap-2 text-xs text-gray-500">
-                        {bill.paymentType === 'QR' ? (
-                            <span className="flex items-center gap-1 bg-blue-50 text-blue-600 px-2 py-1 rounded font-bold"><ImageIcon className="w-3 h-3"/> QR Code</span>
-                        ) : (
-                            <span className="flex items-center gap-1 bg-orange-50 text-orange-600 px-2 py-1 rounded font-bold select-all" onClick={handleCopy}>
-                        {bill.paymentValue} <Copy className="w-3 h-3"/>
-                    </span>
-                        )}
+                {/* PAYERS LIST */}
+                {isOpen && (
+                    <div className="bg-gray-50 p-3 border-t border-gray-100 space-y-2">
+                        {sortedDebtors.map(payer => {
+                            const user = allUsers.find(u => u.id === payer.userId);
+                            if(!user) return null;
+                            const isMe = user.id === currentUser.id;
+
+                            return (
+                                <div key={payer.userId} className={`flex flex-col p-3 rounded-xl border bg-white border-gray-200 shadow-sm ${payer.status === 'VERIFIED' ? 'opacity-60' : ''}`}>
+                                    <div className="flex items-center justify-between w-full">
+                                        <div className="flex items-center gap-3">
+                                            <div className="relative">
+                                                <img src={user.avatar} className={`w-10 h-10 rounded-full border-2 ${payer.status === 'VERIFIED' ? 'border-green-500 grayscale' : 'border-gray-100'}`} />
+                                                {payer.status === 'UNPAID' && <div className="absolute -bottom-1 -right-1 bg-gray-400 text-white text-[8px] px-1.5 rounded-full border border-white">รอ</div>}
+                                                {payer.status === 'REJECTED' && <div className="absolute -bottom-1 -right-1 bg-red-500 text-white text-[8px] px-1.5 rounded-full border border-white">แก้</div>}
+                                            </div>
+                                            <div>
+                                                <div className="text-sm font-bold text-gray-700">
+                                                    {user.name} {isMe && <span className="text-blue-500">(ฉัน)</span>}
+                                                </div>
+                                                <div className="text-[10px] mt-0.5">
+                                                    {payer.status === 'UNPAID' && <span className="text-gray-400">ยังไม่จ่าย</span>}
+                                                    {payer.status === 'REJECTED' && <span className="text-red-500 font-bold flex items-center gap-1"><XCircle className="w-3 h-3"/> สลิปไม่ผ่าน</span>}
+                                                    {payer.status === 'SLIP_SENT' && <span className="text-orange-500 font-bold flex items-center gap-1"><Clock className="w-3 h-3"/> รอตรวจ</span>}
+                                                    {payer.status === 'VERIFIED' && <span className="text-green-600 font-bold flex items-center gap-1"><CheckCircle2 className="w-3 h-3"/> จ่ายแล้ว</span>}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="text-sm font-bold text-gray-700">฿{Math.ceil(payer.amount).toLocaleString()}</div>
+                                    </div>
+
+                                    <div className="mt-3 flex justify-end w-full border-t border-dashed border-gray-100 pt-2">
+                                        {/* ME: UPLOAD */}
+                                        {isMe && (payer.status === 'UNPAID' || payer.status === 'REJECTED') && (
+                                            <div className="w-full">
+                                                <input type="file" accept="image/*" ref={fileInputRef} onChange={handleFileChange} className="hidden" />
+                                                <button onClick={() => fileInputRef.current?.click()} className="w-full flex items-center justify-center gap-2 bg-blue-600 text-white py-2 rounded-lg text-xs font-bold hover:bg-blue-700 transition-all">
+                                                    <Upload className="w-4 h-4" /> {payer.status === 'REJECTED' ? 'แนบสลิปใหม่' : 'แนบสลิป / จ่ายแล้ว'}
+                                                </button>
+                                            </div>
+                                        )}
+
+                                        {/* SLIP PREVIEW & APPROVE */}
+                                        {payer.status === 'SLIP_SENT' && payer.slipUrl && (
+                                            <div className="flex gap-3 w-full items-center justify-between">
+                                                <button
+                                                    onClick={(e) => handleOpenSlip(e, payer.slipUrl!, user.name)} // เปิด Modal สลิป
+                                                    className="flex items-center gap-2 bg-gray-100 px-3 py-2 rounded-lg text-xs text-gray-600 hover:bg-gray-200 flex-1"
+                                                >
+                                                    <ImageIcon className="w-4 h-4" /> ดูสลิป
+                                                </button>
+
+                                                {amIHost && (
+                                                    <div className="flex gap-2">
+                                                        <button onClick={() => onVerifySlip(bill.id, payer.userId, false)} className="bg-red-50 text-red-500 px-3 py-2 rounded-lg text-xs font-bold border border-red-100">ไม่ใช่</button>
+                                                        <button onClick={() => onVerifySlip(bill.id, payer.userId, true)} className="bg-green-500 text-white px-4 py-2 rounded-lg text-xs font-bold shadow-sm">ยืนยัน ✅</button>
+                                                    </div>
+                                                )}
+                                                {isMe && <span className="text-[10px] text-orange-400 font-bold">รอเพื่อนตรวจ...</span>}
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            );
+                        })}
                     </div>
-                    <div className="text-gray-300">
-                        {isOpen ? <ChevronUp className="w-5 h-5"/> : <ChevronDown className="w-5 h-5"/>}
-                    </div>
-                </div>
+                )}
             </div>
 
-            {/* PAYERS LIST (Collapsible) */}
-            {isOpen && (
-                <div className="bg-gray-50 p-3 border-t border-gray-100 space-y-2">
-                    {sortedDebtors.map(payer => {
-                        const user = allUsers.find(u => u.id === payer.userId);
-                        if(!user) return null;
-
-                        return (
-                            <div key={payer.userId} className={`flex items-center justify-between p-2 rounded-xl border ${payer.status === 'VERIFIED' ? 'bg-green-50 border-green-100 opacity-60 order-last' : 'bg-white border-gray-200 shadow-sm'}`}>
-
-                                {/* User Info */}
-                                <div className="flex items-center gap-3">
-                                    <div className={`relative`}>
-                                        <img src={user.avatar} className={`w-9 h-9 rounded-full border-2 ${payer.status === 'VERIFIED' ? 'border-green-500 grayscale' : 'border-gray-100'}`} />
-                                        {payer.status === 'UNPAID' && <div className="absolute -bottom-1 -right-1 bg-gray-400 text-white text-[8px] px-1.5 rounded-full border border-white">รอ</div>}
-                                    </div>
-                                    <div>
-                                        <div className="text-xs font-bold text-gray-700">{user.name}</div>
-                                        <div className="text-[10px]">
-                                            {payer.status === 'UNPAID' && <span className="text-gray-400">ยังไม่จ่าย</span>}
-                                            {payer.status === 'SLIP_SENT' && <span className="text-orange-500 font-bold flex items-center gap-1"><Clock className="w-3 h-3"/> รอตรวจสลิป</span>}
-                                            {payer.status === 'VERIFIED' && <span className="text-green-600 font-bold flex items-center gap-1"><CheckCircle2 className="w-3 h-3"/> จ่ายแล้ว</span>}
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {/* Action Button */}
-                                <div>
-                                    {payer.status === 'UNPAID' && (
-                                        <span className="text-xs font-bold text-gray-300">฿{Math.ceil(amountPerPerson)}</span>
-                                    )}
-
-                                    {payer.status === 'SLIP_SENT' && (
-                                        <button
-                                            onClick={() => {
-                                                if(confirm('ยอดเงินถูกต้อง? กด OK เพื่อยืนยัน')) onVerifySlip(bill.id, payer.userId);
-                                            }}
-                                            className="bg-green-500 text-white px-3 py-1.5 rounded-lg text-xs font-bold shadow hover:bg-green-600 transition-all"
-                                        >
-                                            ตรวจรับ
-                                        </button>
-                                    )}
-
-                                    {payer.status === 'VERIFIED' && (
-                                        <div className="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center text-green-600">
-                                            <CheckCircle2 className="w-4 h-4" />
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-                        );
-                    })}
-                </div>
-            )}
-        </div>
+            {/* MODAL สำหรับแสดงรูป */}
+            <ImagePreviewModal
+                isOpen={!!previewImage}
+                onClose={() => setPreviewImage(null)}
+                imageUrl={previewImage?.url || ''}
+                title={previewImage?.title || ''}
+                showDownload={previewImage?.showDownload}
+            />
+        </>
     );
 };
 

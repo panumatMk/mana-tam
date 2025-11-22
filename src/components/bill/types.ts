@@ -6,7 +6,7 @@ export interface User {
 
 export type PaymentMethodType = 'QR' | 'BANK_ACCOUNT' | 'PROMPT_PAY';
 
-export type PayerStatus = 'UNPAID' | 'SLIP_SENT' | 'VERIFIED';
+export type PayerStatus = 'UNPAID' | 'SLIP_SENT' | 'VERIFIED' | 'REJECTED';
 
 export interface Payer {
     userId: string;

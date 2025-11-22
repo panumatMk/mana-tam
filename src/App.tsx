@@ -9,6 +9,7 @@ import TaskScreen from "./components/task/TaskScreen.tsx";
 import RandomWinnerModal from "./components/random/randomWinnerModal.tsx";
 import CostScreen from "./components/cost/CostScreen.tsx";
 import BillScreen from "./components/bill/BillScreen.tsx";
+import DocsScreen from "./components/docs/DocsScreen.tsx";
 
 interface User {
     name: string;
@@ -107,17 +108,19 @@ function App() {
 
                 {activeTab === 'bill' && <BillScreen />}
 
-                {/* หน้าอื่นๆ ที่ยังไม่ได้ทำ (Coming Soon) */}
-                {activeTab !== 'plan' && activeTab !== 'vote' && (
-                    <div className="h-full overflow-y-auto p-10 text-center text-gray-400">
-                        Coming Soon... ({activeTab})
-                        <div className="mt-10">
-                            <button onClick={handleReset} className="text-[10px] text-red-300 underline">
-                                Reset App
-                            </button>
-                        </div>
-                    </div>
-                )}
+                {activeTab === 'docs' && <DocsScreen />}
+
+                {/*/!* หน้าอื่นๆ ที่ยังไม่ได้ทำ (Coming Soon) *!/*/}
+                {/*{activeTab !== 'plan' && activeTab !== 'vote' && (*/}
+                {/*    <div className="h-full overflow-y-auto p-10 text-center text-gray-400">*/}
+                {/*        Coming Soon... ({activeTab})*/}
+                {/*        <div className="mt-10">*/}
+                {/*            <button onClick={handleReset} className="text-[10px] text-red-300 underline">*/}
+                {/*                Reset App*/}
+                {/*            </button>*/}
+                {/*        </div>*/}
+                {/*    </div>*/}
+                {/*)}*/}
             </div>
 
             <div className="flex-none z-20 relative">
