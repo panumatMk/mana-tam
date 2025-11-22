@@ -8,6 +8,7 @@ import { BillScreen } from './features/bill/BillScreen';
 import { EditTripModal } from './features/plan/EditTripModal';
 import type { User } from './types/user.types';
 import type { Trip } from './types/trip.types';
+import {getTrip, INITIAL_TRIP} from "./services/trip.service.ts";
 
 // Mock Team
 const MOCK_PARTICIPANTS: User[] = [
@@ -24,19 +25,35 @@ function App() {
     const [isTripEditOpen, setIsTripEditOpen] = useState(false);
     const [isProfileEditOpen, setIsProfileEditOpen] = useState(false);
 
-    const [trip, setTrip] = useState<Trip>({
-        title: "My Trip ✈️",
-        startDate: "TBD",
-        endDate: "TBD",
-        participants: MOCK_PARTICIPANTS
-    });
 
+    const [trip, setTrip] = useState<Trip>(INITIAL_TRIP);
+    const [isLoading, setIsLoading] = useState(true);
+
+    // Real-time listener: ดึงข้อมูลทริปจาก Firestore
     useEffect(() => {
         const savedUser = localStorage.getItem('travelApp_user');
-        const savedTrip = localStorage.getItem('travelApp_trip');
         if (savedUser) setUser(JSON.parse(savedUser));
-        if (savedTrip) setTrip({ ...JSON.parse(savedTrip), participants: MOCK_PARTICIPANTS });
-    }, []);
+
+        const unsubscribe = getTrip((newTripData) => {
+            setTrip(newTripData);
+            setIsLoading(false);
+        });
+
+        // Cleanup: ยกเลิกการเชื่อมต่อเมื่อ Component ถูก Unmount
+        return () => {
+            unsubscribe();
+        };
+    }, []); // Run only once
+
+    // const handleSaveTrip = async (updatedTrip: Trip) => {
+    //     try {
+    //         await setTripS(updatedTrip); // เรียกใช้ Service เพื่อบันทึก
+    //         // State จะถูกอัปเดตอัตโนมัติผ่าน onSnapshot listener
+    //     } catch (error) {
+    //         console.error("Failed to save trip:", error);
+    //         // แสดง Modal แจ้งเตือน Error
+    //     }
+    // };
 
     const handleRegister = (newUser: User) => {
         setUser(newUser);
