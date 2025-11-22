@@ -167,7 +167,7 @@ export const PlanScreen: React.FC<PlanScreenProps> = ({ trip, onSaveTrip }) => {
         <div className="flex flex-col h-full bg-F3F4F6 relative">
 
             {/* Header Section (Day Tabs) - ไม่ใช้ fixed height, ปล่อยยืดตาม content */}
-            <div className="flex-none p-2 bg-F3F4F6 z-10 shadow-sm">
+            <div className="flex-none px-4 py-2 bg-F3F4F6 z-10 shadow-sm">
 
                 <div className="flex justify-between items-center animate-fade-in">
                     <div className="flex items-center gap-2">
