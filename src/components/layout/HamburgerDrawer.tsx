@@ -52,7 +52,7 @@ export const HamburgerDrawer: React.FC<Props> = ({ isOpen, onClose, onNavigate, 
                                 className="w-16 h-16 drop-shadow-lg hover:scale-110 transition-transform filter hover:brightness-110"
                                 alt="avatar"
                             />
-                            <button onClick={onEditProfile} className="absolute bottom-0 right-0 bg-white p-1.5 rounded-full shadow-sm border border-gray-100 text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <button onClick={onEditProfile} className="absolute bottom-0 right-0 bg-white p-0.5 rounded-full shadow-sm border border-gray-100 text-gray-500">
                                 <Edit2 className="w-3 h-3" />
                             </button>
                         </div>
