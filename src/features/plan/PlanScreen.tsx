@@ -177,7 +177,7 @@ export const PlanScreen: React.FC<PlanScreenProps> = ({ trip, onSaveTrip }) => {
                             onClick={() => setIsEditMode(!isEditMode)}
                             className={`p-1.5 rounded-full transition-colors ${isEditMode ? 'bg-green-100 text-green-600' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'}`}
                         >
-                            {isEditMode ? <X className="w-4 h-4" /> : <Settings className="w-4 h-4" />}
+                            <Settings className="w-4 h-4" />
                         </button>
                     </div>
                     <div className="text-xs text-gray-400 font-medium">Total {days.length} Days</div>
@@ -191,12 +191,12 @@ export const PlanScreen: React.FC<PlanScreenProps> = ({ trip, onSaveTrip }) => {
                         // ใช้ rectSortingStrategy เพื่อให้รองรับการลากในรูปแบบ Grid/Wrap ได้ดีขึ้น
                         <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragDayEnd}>
                             <SortableContext items={days} strategy={rectSortingStrategy}>
-                                <div className="flex flex-wrap gap-2">
+                                <div className="flex flex-wrap gap-2 py-1">
                                     {days.map((dayId, index) => (
                                         <SortableItem key={dayId} id={dayId} className="">
                                             <div className="relative group">
                                                 <button className="px-5 py-2 rounded-xl text-sm font-bold whitespace-nowrap border border-green-200 bg-green-50 text-green-700 cursor-grab active:cursor-grabbing">
-                                                    Day {index + 1}
+                                                    D-{index + 1}
                                                 </button>
                                                 {/* ปุ่มลบวัน */}
                                                 <button
@@ -209,7 +209,7 @@ export const PlanScreen: React.FC<PlanScreenProps> = ({ trip, onSaveTrip }) => {
                                         </SortableItem>
                                     ))}
                                     {/* ปุ่มเพิ่มวันในโหมด Edit */}
-                                    <button onClick={handleAddDay} className="px-4 py-2 rounded-xl bg-white border border-dashed border-gray-300 text-gray-400 hover:text-green-500 flex items-center justify-center">
+                                    <button onClick={handleAddDay} className="w-10 h-9 flex-shrink-0 flex items-center justify-center bg-white rounded-xl text-green-500 border border-dashed border-green-300 hover:bg-green-50 transition-colors">
                                         <Plus className="w-4 h-4"/>
                                     </button>
                                 </div>
@@ -218,17 +218,17 @@ export const PlanScreen: React.FC<PlanScreenProps> = ({ trip, onSaveTrip }) => {
                     ) : (
                         // 🟢 Mode: VIEW (Clickable + Wrappable + NO Drag)
                         // ไม่ใช้ SortableItem หุ้ม ทำให้ลากไม่ได้
-                        <div className="flex gap-2 no-scrollbar touch-pan-x p-2 overflow-x-auto hide-scrollbar-completely"
+                        <div className="flex gap-2 no-scrollbar touch-pan-x py-1 overflow-x-auto hide-scrollbar-completely"
                              style={{WebkitOverflowScrolling: 'touch'}}>
                             {days.map((dayId, index) => (
                                 <button
                                     key={dayId}
                                     onClick={() => setActiveDay(dayId)}
-                                    className={`px-5 py-2 rounded-xl text-sm font-bold whitespace-nowrap transition-all shadow-sm border 
-                                ${activeDay === dayId ? 'bg-green-600 text-white border-green-600 scale-105 ring-2 ring-green-200' : 'bg-white text-gray-500 border-gray-200'}
+                                    className={`px-5 py-2 rounded-xl text-sm font-bold whitespace-nowrap transition-all border 
+                                ${activeDay === dayId ? 'bg-green-600 text-white border-green-600 ring-green-200' : 'bg-white text-gray-500 border-gray-200'}
                             `}
                                 >
-                                    Day {index + 1}
+                                    D-{index + 1}
                                 </button>
                             ))}
                             {/* ปุ่ม + วัน ด่วน */}
