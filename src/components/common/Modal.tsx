@@ -62,7 +62,7 @@ export const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children, 
             >
 
                 {/* Header */}
-                <div className="flex-none px-6 py-5 border-b border-gray-50 flex justify-between items-center bg-white">
+                <div className="flex-none px-4 py-2 border-b border-gray-50 flex justify-between items-center bg-white">
                     <h2 className="text-xl font-extrabold text-gray-800 tracking-tight">{title}</h2>
 
                     {/* ปุ่มปิด (ลูกศรชี้ลง) */}
@@ -76,7 +76,7 @@ export const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children, 
                 </div>
 
                 {/* Content (Scrollable) */}
-                <div className="flex-1 overflow-y-auto p-6 custom-scrollbar">
+                <div className="flex-1 overflow-y-auto px-5 py-2  custom-scrollbar">
                     {children}
                 </div>
 
