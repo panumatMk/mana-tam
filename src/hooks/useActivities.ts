@@ -71,7 +71,7 @@ export function useActivities() {
         if (!user?.id) return;
 
         try {
-            const activityRef = doc(db, 'trips', user.id, 'activities', activityId);
+            const activityRef = doc(db, 'trips', MOCKGROUPID, 'activities', activityId);
 
             // ตัด fields ที่ไม่ควร update ออก (เช่น id)
             const { id, createdAt, createdBy, createdByName, ...dataToUpdate } = updateData as any;
@@ -94,7 +94,7 @@ export function useActivities() {
     const deleteActivity = async (activityId: string) => {
         if (!user?.id) return;
         try {
-            await deleteDoc(doc(db, 'trips', user.id, 'activities', activityId));
+            await deleteDoc(doc(db, 'trips', MOCKGROUPID, 'activities', activityId));
         } catch (error) {
             console.error("Error deleting activity:", error);
             alert("ลบไม่สำเร็จ");
