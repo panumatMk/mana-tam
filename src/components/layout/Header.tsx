@@ -121,7 +121,7 @@ export const Header: React.FC<Props> = ({
                     {/* Title & Edit Button */}
                     <div className="flex flex-col">
                         <div className="flex items-center gap-2">
-                            <h1 className={`text-2xl font-bold leading-tight max-w-[220px] truncate ${!isTripSetup ? 'text-gray-400' : 'text-gray-800'}`}>
+                            <h1 className={`text-2xl font-bold leading-tight max-w-[315px] truncate ${!isTripSetup ? 'text-gray-400' : 'text-gray-800'}`}>
                                 {isTripSetup ? trip.title : 'ยังไม่มีทริป'}
                             </h1>
                             <button
@@ -142,13 +142,9 @@ export const Header: React.FC<Props> = ({
                                 {isTripSetup && (
                                     <div
                                         className={`px-3 py-1.5 rounded-xl border text-center min-w-[60px] ${daysLeft >= 0 ? 'bg-green-50 text-green-700 border-green-100' : 'bg-gray-100 text-gray-500 border-gray-200'}`}>
-                                        <span className="block text-[8px] uppercase opacity-60 font-bold tracking-wider">
-                                            {daysLeft > 0 ? 'Coming in' : (daysLeft === 0 ? 'Today!' : 'Ended')}
+                                        <span className="text-[8px] uppercase opacity-60 font-bold tracking-wider">
+                                            {daysLeft > 0 ? `Coming in ${daysLeft} Days` : (daysLeft === 0 ? 'Today!' : 'Ended')}
                                         </span>
-                                        {daysLeft > 0 && (
-                                            <span className="text-sm font-extrabold">{daysLeft} <span
-                                                className="text-[9px] font-normal">Days</span></span>
-                                        )}
                                     </div>
                                 )}
                             </div>

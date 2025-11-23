@@ -7,7 +7,8 @@ import { EditTripModal } from './features/plan/EditTripModal';
 import BillScreen from "./features/bill/BillScreen";
 import { useAuth } from './hooks/useAuth';
 import { useTrip } from './hooks/useTrip';
-import { Button } from "./components/ui/Button"; // Import Button
+import { Button } from "./components/ui/Button";
+import {MOCKGROUPID} from "./config/constants.ts"; // Import Button
 
 function App() {
     const { user, isLoading, loginWithLine, updateProfile, logout } = useAuth();
@@ -22,20 +23,25 @@ function App() {
         // 1. ต้องมี User Login แล้วถึงจะจอยได้
         if (!user?.id) return;
 
-        // 2. อ่านค่าจาก URL (?join=xxxx)
-        const queryParams = new URLSearchParams(window.location.search);
-        const hostIdToJoin = queryParams.get('join');
+        joinTripByHostId(MOCKGROUPID).then(() => {
+            // 4. (Optional) เคลียร์ URL ให้สะอาด
+            window.history.replaceState({}, document.title, "/");
+        });
 
-        if (hostIdToJoin) {
-            console.log("🔗 Detect invite link for host:", hostIdToJoin);
-
-            // 3. สั่งจอยทริป
-            joinTripByHostId(hostIdToJoin).then(() => {
-                // 4. (Optional) เคลียร์ URL ให้สะอาด
-                window.history.replaceState({}, document.title, "/");
-            });
-        }
-    }, [user]); // รันเมื่อ user โหลดเสร็จ (Login สำเร็จ)
+        // // 2. อ่านค่าจาก URL (?join=xxxx)
+        // const queryParams = new URLSearchParams(window.location.search);
+        // const hostIdToJoin = queryParams.get('join');
+        //
+        // if (hostIdToJoin) {
+        //     console.log("🔗 Detect invite link for host:", hostIdToJoin);
+        //
+        //     // 3. สั่งจอยทริป
+        //     joinTripByHostId(hostIdToJoin).then(() => {
+        //         // 4. (Optional) เคลียร์ URL ให้สะอาด
+        //         window.history.replaceState({}, document.title, "/");
+        //     });
+        // }
+    }, [user?.id]); // รันเมื่อ user โหลดเสร็จ (Login สำเร็จ)
 
     const handleShareLink = () => {
         if (!user?.id) return;

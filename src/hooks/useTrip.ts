@@ -48,7 +48,6 @@ export function useTrip() {
             console.log("Auto-joining trip...");
             const myUserEntry: User = {
                 ...user,
-                isGuest: false,
                 createdAt: new Date(), // ใช้ Date ธรรมดาเพื่อเลี่ยง Loop ของ serverTimestamp
                 createdBy: 'SYSTEM',
                 createdByName: 'Auto Join'
@@ -58,6 +57,8 @@ export function useTrip() {
             updateDoc(tripRef, {
                 participants: arrayUnion(myUserEntry)
             }).catch(err => console.error("Auto-join failed:", err));
+        } else {
+
         }
     }, [user, trip.participants, trip.title]);
 
@@ -81,7 +82,6 @@ export function useTrip() {
                     // ถ้าสร้างทริปใหม่ ให้ใส่ตัวเองเป็นคนแรกเลย
                     participants: [{
                         ...user,
-                        isGuest: false,
                         createdAt: new Date(),
                         createdBy: user.id,
                         createdByName: user.name
@@ -105,7 +105,6 @@ export function useTrip() {
                 id: `guest_${Date.now()}`, // Gen ID มั่วๆ ไปก่อน
                 name: name,
                 avatar: `https://api.dicebear.com/9.x/micah/svg?seed=${name}`, // Gen รูปตามชื่อ
-                isGuest: true,
 
                 // ✨ Audit Log สำหรับคนนี้
                 createdAt: new Date(), // ใช้ Client Time ไปก่อนเพื่อให้ใช้ง่ายกับ Array
@@ -129,7 +128,7 @@ export function useTrip() {
 // 🔥 ฟังก์ชันใหม่: จอยทริปชาวบ้าน (ผ่าน Link)
     const joinTripByHostId = async (hostId: string) => {
         if (!user?.id) return;
-        if (hostId === user.id) return; // จอยทริปตัวเองไม่ได้ (มันมีอยู่แล้ว)
+        // if (hostId === user.id) return; // จอยทริปตัวเองไม่ได้ (มันมีอยู่แล้ว)
 
         // head code
         try {
@@ -145,7 +144,6 @@ export function useTrip() {
                     // เตรียมข้อมูลตัวเราพร้อม Audit Log
                     const myUserEntry = {
                         ...user,
-                        isGuest: false,
                         joinedAt: new Date(), // บันทึกเวลาที่กด Link เข้ามา
                         joinedMethod: 'line_link'
                     };
@@ -156,6 +154,7 @@ export function useTrip() {
                     });
                     console.log(`✅ Joined trip of ${hostId} successfully!`);
                     alert("เข้าร่วมทริปสำเร็จ! 🎉");
+                    return true;
                 }
             }
         } catch (error) {
