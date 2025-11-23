@@ -137,24 +137,24 @@ export const Header: React.FC<Props> = ({
                             <div className="flex items-center gap-1 mt-1 text-gray-500 text-xs font-medium">
                                 <span className="w-2 h-2 rounded-full bg-green-500"></span>
                                 <p>{formatDateRangeWithYear(trip.startDate, trip.endDate)}</p>
+
+                                {/* Countdown Badge */}
+                                {isTripSetup && (
+                                    <div
+                                        className={`px-3 py-1.5 rounded-xl border text-center min-w-[60px] ${daysLeft >= 0 ? 'bg-green-50 text-green-700 border-green-100' : 'bg-gray-100 text-gray-500 border-gray-200'}`}>
+                                        <span className="block text-[8px] uppercase opacity-60 font-bold tracking-wider">
+                                            {daysLeft > 0 ? 'Coming in' : (daysLeft === 0 ? 'Today!' : 'Ended')}
+                                        </span>
+                                        {daysLeft > 0 && (
+                                            <span className="text-sm font-extrabold">{daysLeft} <span
+                                                className="text-[9px] font-normal">Days</span></span>
+                                        )}
+                                    </div>
+                                )}
                             </div>
                         )}
                     </div>
                 </div>
-
-                {/* Countdown Badge */}
-                {isTripSetup && (
-                    <div
-                        className={`px-3 py-1.5 rounded-xl border text-center min-w-[60px] ${daysLeft >= 0 ? 'bg-green-50 text-green-700 border-green-100' : 'bg-gray-100 text-gray-500 border-gray-200'}`}>
-                <span className="block text-[8px] uppercase opacity-60 font-bold tracking-wider">
-                    {daysLeft > 0 ? 'Coming in' : (daysLeft === 0 ? 'Today!' : 'Ended')}
-                </span>
-                        {daysLeft > 0 && (
-                            <span className="text-sm font-extrabold">{daysLeft} <span
-                                className="text-[9px] font-normal">Days</span></span>
-                        )}
-                    </div>
-                )}
             </div>
 
             {/* Team Avatars (แสดงเฉพาะเมื่อมีทริป) */}
