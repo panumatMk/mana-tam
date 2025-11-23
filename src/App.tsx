@@ -67,7 +67,7 @@ function App() {
                         setIsTripEditOpen(false);
                     }} />
                 ) : (
-                    <BillScreen />
+                    <BillScreen user={user}/>
                 )}
             </div>
 
