@@ -46,15 +46,16 @@ export const HamburgerDrawer: React.FC<Props> = ({ isOpen, onClose, onNavigate, 
                 {/* Profile Header (เพิ่มปุ่ม Edit) */}
                 <div className="pt-14 pb-8 px-6 bg-white relative">
                     <div className="flex items-center gap-4">
-                        <div className="relative group cursor-pointer" onClick={onEditProfile}>
+                        <div className="relative group cursor-pointer">
                             <img
                                 src={user.avatar}
                                 className="w-16 h-16 drop-shadow-lg hover:scale-110 transition-transform filter hover:brightness-110"
                                 alt="avatar"
                             />
-                            <button onClick={onEditProfile} className="absolute bottom-0 right-0 bg-white p-0.5 rounded-full shadow-sm border border-gray-100 text-gray-500">
-                                <Edit2 className="w-3 h-3" />
-                            </button>
+                            {/*coming soon*/}
+                            {/*<button onClick={onEditProfile} className="absolute bottom-0 right-0 bg-white p-0.5 rounded-full shadow-sm border border-gray-100 text-gray-500">*/}
+                            {/*    <Edit2 className="w-3 h-3" />*/}
+                            {/*</button>*/}
                         </div>
 
                         <div className="flex-1 overflow-hidden">
