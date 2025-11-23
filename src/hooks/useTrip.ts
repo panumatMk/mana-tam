@@ -53,7 +53,7 @@ export function useTrip() {
                 createdByName: 'Auto Join'
             };
             // อัปเดตเฉพาะ field participants
-            const tripRef = doc(db, 'trips', user.id);
+            const tripRef = doc(db, 'trips', MOCKGROUPID);
             updateDoc(tripRef, {
                 participants: arrayUnion(myUserEntry)
             }).catch(err => console.error("Auto-join failed:", err));
@@ -115,7 +115,7 @@ export function useTrip() {
                 updatedByName: user.name
             };
 
-            const tripRef = doc(db, 'trips', user.id);
+            const tripRef = doc(db, 'trips', MOCKGROUPID);
             await updateDoc(tripRef, {
                 participants: arrayUnion(newGuest)
             });
