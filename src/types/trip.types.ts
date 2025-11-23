@@ -6,6 +6,7 @@ export interface Trip {
     startDate: string;
     endDate: string;
     participants: User[];
+    totalDays?: number;
 
     // ✨ Audit Fields (เก็บ Log)
     createdAt?: number | Date; // เก็บเป็น Timestamp หรือ Date

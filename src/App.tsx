@@ -11,7 +11,7 @@ import { Button } from "./components/ui/Button"; // Import Button
 
 function App() {
     const { user, isLoading, loginWithLine, updateProfile, logout } = useAuth();
-    const { trip, saveTrip } = useTrip(user?.id);
+    const { trip, saveTrip } = useTrip();
 
     const [screen, setScreen] = useState<'plan' | 'bill'>('plan');
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
