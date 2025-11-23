@@ -121,7 +121,7 @@ export const Header: React.FC<Props> = ({
                     {/* Title & Edit Button */}
                     <div className="flex flex-col">
                         <div className="flex items-center gap-2">
-                            <h1 className={`text-2xl font-bold leading-tight max-w-[315px] truncate ${!isTripSetup ? 'text-gray-400' : 'text-gray-800'}`}>
+                            <h1 className={`text-2xl font-bold leading-tight flex-1 min-w-0 truncate ${!isTripSetup ? 'text-gray-400' : 'text-gray-800'}`}>
                                 {isTripSetup ? trip.title : 'ยังไม่มีทริป'}
                             </h1>
                             <button

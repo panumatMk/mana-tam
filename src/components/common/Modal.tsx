@@ -45,7 +45,7 @@ export const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children, 
             {/* Modal Panel: Slide Up/Down (FIXED for Full Screen Mobile) */}
             <div
                 className={`
-          bg-white w-full max-w-md 
+          bg-white w-full
           
           /* Mobile Fix: เต็มจอจากล่างขึ้นบน */
           h-full max-h-full rounded-none sm:rounded-[2rem] 

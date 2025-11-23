@@ -144,14 +144,14 @@ const BillScreen: React.FC<BillScreenProps> = ({ user }) => {
                     <div className="relative">
                         <select value={filterPerson} onChange={(e) => setFilterPerson(e.target.value)} className="appearance-none bg-white border border-gray-200 text-gray-600 text-xs font-bold py-2 pl-3 pr-8 rounded-xl outline-none focus:border-blue-500">
                             <option value="ALL">ทุกคน</option>
-                            {USERS.map(u => u.id !== user.id && <option key={u.id} value={u.id}>{u.name}</option>)}
+                            {USERS.map(u => <option key={u.id} value={u.id}>{u.name}</option>)}
                         </select>
                         <Filter className="absolute top-2.5 right-2.5 w-3 h-3 text-gray-400 pointer-events-none"/>
                     </div>
                 </div>
             </div>
 
-            <div className="flex-1 overflow-y-auto custom-scrollbar px-4 pb-24 min-h-0">
+            <div className="flex-1 overflow-y-auto hide-scrollbar-completely px-4 pb-24 min-h-0">
                 <div className="space-y-1">
                     {filteredBills.map(bill => (
                         <BillCard

@@ -81,7 +81,7 @@ function App() {
     const TAB_LABELS = { plan: 'Plan', bill: 'Bill' };
 
     return (
-        <div className="h-full flex flex-col bg-[#F3F4F6] w-full max-w-md mx-auto shadow-2xl overflow-hidden">
+        <div className="h-full flex flex-col bg-[#F3F4F6] w-full mx-auto shadow-2xl overflow-hidden">
             <Header
                 user={user}
                 trip={trip}

@@ -53,12 +53,12 @@ const BillCard: React.FC<Props> = ({
 
     const handleOpenQR = (e: React.MouseEvent) => {
         e.stopPropagation();
-        setPreviewImage({url: bill.paymentValue, title: 'QR Code รับเงิน', showDownload: true});
+        // setPreviewImage({url: bill.paymentValue, title: 'QR Code รับเงิน', showDownload: true});
     };
 
     const handleOpenSlip = (e: React.MouseEvent, url: string, userName: string) => {
         e.stopPropagation();
-        setPreviewImage({url: url, title: `สลิปของ ${userName}`, showDownload: true});
+        // setPreviewImage({url: url, title: `สลิปของ ${userName}`, showDownload: true});
     };
 
     const handleCopy = (e: React.MouseEvent) => {
@@ -104,7 +104,7 @@ const BillCard: React.FC<Props> = ({
                         </div>
                     </div>
 
-                    <div className="flex items-center justify-between mt-3 pt-3 border-t border-dashed border-gray-100">
+                    <div className="flex items-center justify-between border-t border-dashed border-gray-100">
                         <div className="flex items-center gap-2 text-xs text-gray-500">
                             {bill.paymentType === 'QR' ? (
                                 <button
@@ -121,8 +121,27 @@ const BillCard: React.FC<Props> = ({
                                 </button>
                             )}
                         </div>
-                        <div className="text-gray-300">
-                            {isOpen ? <ChevronUp className="w-5 h-5"/> : <ChevronDown className="w-5 h-5"/>}
+                        <div className="text-gray-300 flex items-end">
+                            <span>
+                               <div className="flex -space-x-2 overflow-hidden pl-1 mt-3">
+                                {sortedDebtors.slice(0, 5).map((p, index) => {
+                                    const user = allUsers.find(u => u.id === p.userId);
+                                    if (!user) return null;
+                                    // const isMe = user.id === currentUser.id;
+                                    // if(isMe) return null;
+                                    return (
+                                        <img
+                                            key={user.id}
+                                            src={user.avatar}
+                                            className={`inline-block h-6 w-6 rounded-full ring-2 ring-white object-cover bg-gray-100 ${p.status === 'VERIFIED' ? 'border-green-500 grayscale' : 'border-gray-100'}`}
+                                            style={{zIndex: 10 - index}}
+                                            alt={user.name}
+                                        />
+                                    )
+                                })}
+                            </div>
+                            </span>
+                            {isOpen ? <ChevronUp className="ml-2 w-5 h-5"/> : <ChevronDown className="w-5 h-5"/>}
                         </div>
                     </div>
                 </div>
