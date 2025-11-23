@@ -1,4 +1,4 @@
-name: Deploy to GitHub Pages
+name: Deploy to Firebase Hosting
 
 on:
   push:
@@ -9,29 +9,33 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+      - name: Checkout Repository
+        uses: actions/checkout@v4 # อัปเดตเป็น v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4 # อัปเดตเป็น v4
         with:
-          node-version: 20 # 🔥 FIX: เปลี่ยนเป็น 20 หรือ 22 เพื่อรองรับ Vite และ Rolldown
+          node-version: 20
           cache: 'npm'
 
       - name: Install dependencies
         run: npm install
 
-      - name: Build project (npm run build)
+      - name: Build Project
         run: npm run build
         env:
           VITE_LIFF_ID: ${{ secrets.VITE_LIFF_ID }}
-          run: npm run build
 
-      # 💡 Deploy to gh-pages branch
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
+      # 🚀 Deploy to Firebase Hosting
+      - name: Deploy to Firebase
+        uses: FirebaseExtended/action-hosting-deploy@v0
         with:
-          # ตัวนี้ต้องมีสิทธิ์ Write Access
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist
-          publish_branch: gh-pages
+          # 💡 ต้องสร้าง Secret ชื่อ FIREBASE_TOKEN ใน GitHub ก่อน
+          repoToken: '${{ secrets.GITHUB_TOKEN }}'
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+
+          # 🔴 แก้ YOUR_PROJECT_ID_HERE เป็น Project ID จริงใน Firebase Console
+          projectId: '${{secrets.PROJECT_ID}}''
+
+          # (Optional) ถ้าคุณตั้งค่า Hosting ให้ deploy ไปที่โฟลเดอร์ dist
+          entryPoint: ./
