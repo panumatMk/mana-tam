@@ -1,8 +1,8 @@
 // --- NOTE: This is a Mock Service using localStorage to simulate GET/SET ---
 // --- No Firebase/Firestore is used, only simple GET/SET actions. ---
-
-// --- TYPES (Minimal definitions) ---
-import type {Trip} from "../types/trip.types.ts";
+import { db } from "../config/firebase.ts";
+import { doc, setDoc, onSnapshot, getDoc } from "firebase/firestore";
+import type { Trip } from "../types/trip.types.ts";
 
 // Initial Trip Data (ค่าเริ่มต้นเมื่อไม่มีข้อมูล)
 export const INITIAL_TRIP: Trip = {
@@ -23,6 +23,7 @@ const MOCK_SAVED_TRIP: Trip = {
     ],
 };
 
+const TRIP_ID = "my_trip_001";
 
 /**
  * 1. Core Service Function: GET Trip (Mocking an API call)
@@ -30,27 +31,24 @@ const MOCK_SAVED_TRIP: Trip = {
  * @returns Unsubscribe function (Mock)
  */
 export const getTrip = (callback: (trip: Trip) => void): (() => void) => {
+    const docRef = doc(db, "trips", TRIP_ID);
 
-    // ดึงข้อมูลทริปจาก LocalStorage (จำลองว่าเป็น DB)
-    const storedTripString = localStorage.getItem('travelApp_mock_trip');
+    // onSnapshot คือฟีเจอร์เด็ดของ Firebase ที่จะทำงานทุกครั้งที่ข้อมูลใน DB เปลี่ยน
+    const unsubscribe = onSnapshot(docRef, (docSnap) => {
+        if (docSnap.exists()) {
+            console.log("✅ อัปเดตข้อมูลทริปจาก Firebase!");
+            callback(docSnap.data() as Trip);
+        } else {
+            // ถ้ายังไม่มีข้อมูลใน DB ให้ส่งค่าว่างกลับไป
+            console.log("⚠️ ไม่พบข้อมูลทริป ใช้ค่าเริ่มต้น");
+            callback(INITIAL_TRIP);
+        }
+    }, (error) => {
+        console.error("❌ Error fetching trip:", error);
+    });
 
-    let tripData: Trip;
-
-    if (storedTripString) {
-        tripData = JSON.parse(storedTripString);
-
-    } else {
-        // หากไม่มีข้อมูลใน LocalStorage ให้ใช้ค่าเริ่มต้น (ว่างเปล่า)
-        tripData = INITIAL_TRIP;
-    }
-
-    // จำลองการโหลดข้อมูลแบบ Asynchronous
-    callback(tripData);
-
-    // Return function Mock สำหรับยกเลิกการเชื่อมต่อ
-    return () => {
-        console.log("SERVICE MOCK: Listener unsubscribed.");
-    };
+    // ส่ง function สำหรับยกเลิกการฟังกลับไป (ใช้ตอน unmount component)
+    return unsubscribe;
 };
 
 
@@ -59,21 +57,15 @@ export const getTrip = (callback: (trip: Trip) => void): (() => void) => {
  * @param trip - ข้อมูลทริปที่ต้องการบันทึก
  */
 export const setTrip = async (trip: Trip): Promise<void> => {
-
-    // จำลองการยิง POST Request ไป Server (สำเร็จเสมอ)
-    return new Promise((resolve) => {
-        setTimeout(() => {
-            console.log("SERVICE MOCK: Sending trip data via POST simulation.");
-
-            // บันทึกข้อมูลใหม่ลง LocalStorage
-            localStorage.setItem('travelApp_mock_trip', JSON.stringify(trip));
-
-            // ในแอปจริง ต้องเรียก Callback (re-fetch) หลังจาก POST สำเร็จ
-            // แต่ใน Mock นี้ เราจะให้ Component จัดการ Load ใหม่เอง
-
-            resolve();
-        }, 300); // ดีเลย์ 300ms เพื่อจำลองการบันทึก
-    });
+    try {
+        const docRef = doc(db, "trips", TRIP_ID);
+        // merge: true หมายถึงถ้ามีข้อมูลเดิมอยู่ ให้ทับเฉพาะฟิลด์ที่ส่งไป (แต่ถ้าส่งไปทั้งก้อนก็ทับหมด)
+        await setDoc(docRef, trip, { merge: true });
+        console.log("✅ บันทึกทริปสำเร็จ!");
+    } catch (e) {
+        console.error("❌ Error saving trip: ", e);
+        throw e;
+    }
 };
 
 
@@ -83,8 +75,12 @@ export const setTrip = async (trip: Trip): Promise<void> => {
 export const getUserId = () => {
     const storedUser = localStorage.getItem('travelApp_user');
     if (storedUser) {
-        const user = JSON.parse(storedUser);
-        return user.id;
+        try {
+            const user = JSON.parse(storedUser);
+            return user.id;
+        } catch (e) {
+            return 'guest';
+        }
     }
-    return 'guest'; // Fallback
+    return 'guest';
 };

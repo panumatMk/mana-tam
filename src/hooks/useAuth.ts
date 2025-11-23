@@ -1,41 +1,53 @@
-// src/hooks/useAuth.ts
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react'; // 1. เพิ่ม useRef
 import liff from '@line/liff';
 import type { User } from '../types/user.types';
 
 const STORAGE_KEY = 'travelApp_user';
-// 🔴 ใส่ LIFF ID ของคุณตรงนี้
 const LIFF_ID = import.meta.env.VITE_LIFF_ID || "";
 
 export function useAuth() {
     const [user, setUser] = useState<User | null>(null);
-    const [isLoading, setIsLoading] = useState(true); // เพิ่มสถานะโหลด
+    const [isLoading, setIsLoading] = useState(true);
+
+    // 2. เพิ่ม Ref กันรันซ้ำ
+    const isInitCalled = useRef(false);
 
     useEffect(() => {
+        // 3. ถ้าเคยเรียก init ไปแล้ว ให้หยุดทันที (ป้องกัน Strict Mode รันซ้ำ)
+        if (isInitCalled.current) return;
+        isInitCalled.current = true;
+
         const initLiff = async () => {
             try {
-                // 1. Initialize LIFF
+                if (!LIFF_ID) {
+                    console.warn("⚠️ ไม่พบ VITE_LIFF_ID");
+                    throw new Error("VITE_LIFF_ID is missing");
+                }
+
+                // เริ่มต้น LIFF
                 await liff.init({ liffId: LIFF_ID });
 
-                // 2. เช็คว่า Login หรือยัง (ถ้าเปิดใน LINE จะ Login อัตโนมัติ)
+                // ถ้า Login แล้ว ให้ดึงข้อมูล
                 if (liff.isLoggedIn()) {
                     const profile = await liff.getProfile();
-
                     const lineUser: User = {
-                        id: profile.userId, // ใช้ Line User ID จริง
+                        id: profile.userId,
                         name: profile.displayName,
-                        avatar: profile.pictureUrl || 'https://api.dicebear.com/9.x/micah/svg?seed=Default' // กันเหนียวถ้ารูปไม่มี
+                        avatar: profile.pictureUrl || 'https://api.dicebear.com/9.x/micah/svg?seed=Default'
                     };
-
                     setUser(lineUser);
                     localStorage.setItem(STORAGE_KEY, JSON.stringify(lineUser));
                 } else {
-                    // ถ้ายังไม่ Login (เปิดใน Browser ธรรมดา)
-                    // กรณีนี้เราจะไม่ Auto Login เพื่อให้ User กดปุ่มเอง หรือจะสั่ง liff.login() เลยก็ได้
+                    // ถ้ายังไม่ Login และไม่ได้อยู่ใน LINE App ให้ Auto Login เลยก็ได้ (Optional)
                     // liff.login();
                 }
             } catch (err) {
-                console.error('LIFF Init Failed', err);
+                console.error('❌ LIFF Init Failed:', err);
+                // ถ้าพังเพราะ code invalid ให้เคลียร์ URL ทิ้ง เพื่อให้ user ลองใหม่ได้
+                if (window.location.search.includes("code=")) {
+                    window.history.replaceState(null, "", window.location.pathname);
+                    window.location.reload();
+                }
             } finally {
                 setIsLoading(false);
             }
@@ -44,9 +56,11 @@ export function useAuth() {
         initLiff();
     }, []);
 
-    // ฟังก์ชัน Login สำหรับปุ่มกด (กรณีเปิด Chrome แล้วยังไม่ได้ล็อกอิน)
     const loginWithLine = () => {
-        liff.login();
+        if (!LIFF_ID) return;
+        if (!liff.isLoggedIn()) {
+            liff.login();
+        }
     };
 
     const logout = () => {
@@ -56,7 +70,6 @@ export function useAuth() {
         window.location.reload();
     };
 
-    // ฟังก์ชัน updateProfile อาจจะไม่จำเป็นแล้วเพราะดึงจาก LINE แต่เก็บไว้เผื่อแก้ชื่อเล่นในแอป
     const updateProfile = (updatedUser: User) => {
         setUser(updatedUser);
         localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedUser));
@@ -64,9 +77,8 @@ export function useAuth() {
 
     return {
         user,
-        isLoading, // ส่งค่าโหลดออกไป
-        loginWithLine, // ส่งฟังก์ชันล็อกอิน
-        register: updateProfile, // map ของเดิมเข้ากับอันใหม่
+        isLoading,
+        loginWithLine,
         updateProfile,
         logout
     };
