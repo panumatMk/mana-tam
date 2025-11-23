@@ -5,6 +5,7 @@ import {
 import { db } from '../config/firebase';
 // ❌ ลบ import { useAuth } ... ออก
 import type { BillItem } from '../types/bill.types';
+import {MOCKGROUPID} from "../config/constants.ts";
 
 // ✅ รับ userId เข้ามาเป็น Argument
 export function useBills(userId?: string) {
@@ -15,7 +16,7 @@ export function useBills(userId?: string) {
     useEffect(() => {
         if (!userId) return; // เช็ค userId ที่รับมา
 
-        const billsRef = collection(db, 'trips', userId, 'bills');
+        const billsRef = collection(db, 'trips', MOCKGROUPID, 'bills');
         const q = query(billsRef, orderBy('createdAt', 'desc'));
 
         const unsubscribe = onSnapshot(q, (snapshot) => {
@@ -35,7 +36,7 @@ export function useBills(userId?: string) {
     const addBill = async (billData: Omit<BillItem, 'id' | 'createdAt' | 'updatedAt'>) => {
         if (!userId) return;
         try {
-            const billsRef = collection(db, 'trips', userId, 'bills');
+            const billsRef = collection(db, 'trips', MOCKGROUPID, 'bills');
             await addDoc(billsRef, {
                 ...billData,
                 createdAt: serverTimestamp(),

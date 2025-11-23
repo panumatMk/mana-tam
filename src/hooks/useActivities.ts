@@ -13,6 +13,7 @@ import {
 import { db } from '../config/firebase';
 import { useAuth } from './useAuth';
 import type { Activity } from '../types/plan.types';
+import {MOCKGROUPID} from "../config/constants.ts";
 
 export function useActivities() {
     const { user } = useAuth();
@@ -24,7 +25,7 @@ export function useActivities() {
         if (!user?.id) return;
 
         // Path: trips/{userId}/activities
-        const activitiesRef = collection(db, 'trips', user.id, 'activities');
+        const activitiesRef = collection(db, 'trips', MOCKGROUPID, 'activities');
         // เรียงตามเวลา (time)
         const q = query(activitiesRef, orderBy('time', 'asc'));
 
@@ -46,7 +47,7 @@ export function useActivities() {
         if (!user?.id) return;
 
         try {
-            const activitiesRef = collection(db, 'trips', user.id, 'activities');
+            const activitiesRef = collection(db, 'trips', MOCKGROUPID, 'activities');
 
             await addDoc(activitiesRef, {
                 ...activityData,
