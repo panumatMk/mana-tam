@@ -2,6 +2,7 @@ import { useState, useMemo, FormEvent } from 'react';
 import { Check } from 'lucide-react'; // เพิ่มไอคอน Refresh ให้ดูดีขึ้น
 import type { User } from '../../types/user.types';
 import { APP_NAME, APP_FULL_TITLE } from '../../config/constants';
+import {Button} from "../../components/ui/Button.tsx";
 
 // ย้าย Constants ออกมานอก Component (Best Practice)
 const MALE_SEEDS = ['Christopher', 'Oliver', 'Sebastian', 'Joshua', 'Daniel'];
@@ -159,12 +160,13 @@ export function RegistrationScreen({ onComplete }: RegistrationScreenProps) {
                 </div>
 
                 {/* Submit Button */}
-                <button
+                <Button
                     type="submit"
-                    className="w-full bg-green-600 text-white font-bold py-3.5 rounded-2xl shadow-lg shadow-green-200 hover:bg-green-700 active:scale-95 transition-all text-lg"
+                    variant="primary"
+                    size="lg-full"
                 >
                     ไปลุยกันเลย 🚀
-                </button>
+                </Button>
             </form>
         </div>
     );
