@@ -1,14 +1,12 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react-swc';
 
-// FIX: ใช้ชื่อ Repository ของคุณ
-const repoName = 'mana-tam';
-
 export default defineConfig({
   plugins: [react()],
 
-  // 💡 FIX 1: ตั้งค่า Base Path ให้ชี้ไปที่ชื่อ Repository
-  base: `/${repoName}/`,
+  // 🔴 ลบหรือแก้บรรทัด base เดิมที่เป็น '/mana-tam/' ออก
+  // ✅ เปลี่ยนเป็น '/' หรือลบทิ้งไปเลย (ค่า Default คือ '/')
+  base: '/',
 
   server: {
     host: true,
