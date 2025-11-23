@@ -3,7 +3,7 @@ import {doc, onSnapshot, setDoc, serverTimestamp, updateDoc, arrayUnion, getDoc}
 import {db} from '../config/firebase';
 import type {Trip} from '../types/trip.types';
 import type {User} from '../types/user.types';
-import {MOCK_PARTICIPANTS} from '../config/constants';
+import {MOCK_PARTICIPANTS, MOCKGROUPID} from '../config/constants';
 import {useAuth} from './useAuth';
 
 const INITIAL_TRIP: Trip = {
@@ -23,7 +23,7 @@ export function useTrip() {
         if (!user?.id) return;
 
         setIsLoading(true);
-        const tripRef = doc(db, 'trips', user.id);
+        const tripRef = doc(db, 'trips', MOCKGROUPID);
 
         const unsubscribe = onSnapshot(tripRef, (docSnap) => {
             if (docSnap.exists()) {
@@ -66,7 +66,7 @@ export function useTrip() {
     const saveTrip = async (newTripData: Partial<Trip>) => {
         if (!user?.id) return;
         try {
-            const tripRef = doc(db, 'trips', user.id);
+            const tripRef = doc(db, 'trips', MOCKGROUPID);
             const isCreate = !trip.createdAt;
 
             const auditData = {
@@ -132,9 +132,8 @@ export function useTrip() {
         if (hostId === user.id) return; // จอยทริปตัวเองไม่ได้ (มันมีอยู่แล้ว)
 
         // head code
-        hostId = "Uaee5efbc0219daa1f51c46bd42c5a581";
         try {
-            const tripRef = doc(db, 'trips', hostId);
+            const tripRef = doc(db, 'trips', MOCKGROUPID);
             const tripSnap = await getDoc(tripRef);
 
             if (tripSnap.exists()) {
