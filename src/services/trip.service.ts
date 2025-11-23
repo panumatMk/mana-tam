@@ -80,4 +80,11 @@ export const setTrip = async (trip: Trip): Promise<void> => {
 /**
  * 3. Utility: ใช้สำหรับดึง User ID (Mock)
  */
-export const getUserId = () => 'u1'; // Mock ID
+export const getUserId = () => {
+    const storedUser = localStorage.getItem('travelApp_user');
+    if (storedUser) {
+        const user = JSON.parse(storedUser);
+        return user.id;
+    }
+    return 'guest'; // Fallback
+};
