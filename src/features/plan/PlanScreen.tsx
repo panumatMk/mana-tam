@@ -381,3 +381,5 @@ export const PlanScreen: React.FC<PlanScreenProps> = ({trip}) => {
         </div>
     );
 };
+
+
