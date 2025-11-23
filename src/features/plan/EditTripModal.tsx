@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import {AlertCircle} from 'lucide-react';
 import {Modal} from '../../components/common/Modal';
 import type {Trip} from '../../types/trip.types';
+import {Button} from "../../components/ui/Button.tsx";
 
 interface Props {
     isOpen: boolean;
@@ -30,7 +31,7 @@ export const EditTripModal: React.FC<Props> = ({isOpen, onClose, onSave, initial
         let hasError = false;
         const today = getTodayDate();
 
-        if (!title.trim()) {
+        if (!title?.trim()) {
             errors.title = "กรุณาตั้งชื่อทริป";
             hasError = true;
         }
@@ -57,7 +58,7 @@ export const EditTripModal: React.FC<Props> = ({isOpen, onClose, onSave, initial
         }
 
         const newTrip: Trip = {
-            title: title.trim(),
+            title: title?.trim(),
             startDate: startDate,
             endDate: endDate,
             participants: initialTrip.participants
@@ -69,10 +70,14 @@ export const EditTripModal: React.FC<Props> = ({isOpen, onClose, onSave, initial
 
     // Footer Button (Emoji 💾)
     const footerContent = (
-        <button type="submit" form="edit-trip-form"
-                className="w-full bg-green-600 text-white font-bold py-3.5 rounded-2xl shadow-lg flex items-center justify-center gap-2 active:scale-95 transition-all text-base hover:bg-green-700">
+        <Button
+            type="submit"
+            form="edit-trip-form"
+            variant="primary"
+            size="lg"
+        >
             <span className="text-lg">💾</span> บันทึกข้อมูล
-        </button>
+        </Button>
     );
 
     return (

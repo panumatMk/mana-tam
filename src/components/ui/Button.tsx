@@ -19,7 +19,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     // 1. ทำให้ children เป็น Optional โดยใช้ PropsWithChildren
     //    หรือถ้าไม่ต้องการ children เลย ให้ลบออก
     variant?: 'primary' | 'danger' | 'outline' | 'ghost';
-    size?: 'sm' | 'md' | 'lg' | 'lg-full';
+    size?: 'sm' | 'md' | 'lg' ;
 }
 
 // 2. ใช้ PropsWithChildren<T> และ Arrow Function ธรรมดาแทน React.FC<T>
@@ -46,7 +46,7 @@ export const Button = React.forwardRef<HTMLButtonElement, PropsWithChildren<Butt
             const sizes = {
                 sm: "py-2 px-3 text-xs w-full",
                 md: "py-3 px-4 text-sm w-full",
-                "lg-full": "py-3.5 px-6 text-base w-full",
+                lg: "py-3.5 px-6 text-base w-full",
             };
 
             return cn(baseStyles, variants[variant], sizes[size], className);

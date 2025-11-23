@@ -22,6 +22,7 @@ import {
     verticalListSortingStrategy
 } from '@dnd-kit/sortable';
 import {SortableItem} from "../../components/common/SorttableItem.tsx";
+import {Button} from "../../components/ui/Button.tsx";
 
 interface PlanScreenProps {
     trip: Trip;
@@ -149,13 +150,14 @@ export const PlanScreen: React.FC<PlanScreenProps> = ({ trip, onSaveTrip }) => {
                     </div>
                     <h3 className="text-xl font-extrabold text-gray-800 mb-2 tracking-tight">ยังไม่มีแผนเที่ยวเลย</h3>
                     <p className="text-gray-400 text-sm mb-8 font-medium">เริ่มสร้าง Timeline วันแรกของคุณกันเถอะ</p>
-                    <button
-                        onClick={() => setIsTripModalOpen(true)}
-                        className="w-full bg-green-600 text-white py-4 rounded-2xl font-bold shadow-xl shadow-green-200 flex items-center justify-center gap-2 hover:bg-green-700 active:scale-95 transition-all text-lg"
-                    >
+                    <Button
+                        size="lg"
+                        type="submit"
+                        variant="primary"
+                        onClick={() => setIsTripModalOpen(true)}>
                         <Plus className="w-6 h-6" strokeWidth={3} />
                         <span>สร้างแผนเที่ยว</span>
-                    </button>
+                    </Button>
                 </div>
                 <EditTripModal isOpen={isTripModalOpen} onClose={() => setIsTripModalOpen(false)} onSave={onSaveTrip} initialTrip={trip} />
             </div>

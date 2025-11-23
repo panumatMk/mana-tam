@@ -163,7 +163,7 @@ export function RegistrationScreen({ onComplete }: RegistrationScreenProps) {
                 <Button
                     type="submit"
                     variant="primary"
-                    size="lg-full"
+                    size="lg"
                 >
                     ไปลุยกันเลย 🚀
                 </Button>
