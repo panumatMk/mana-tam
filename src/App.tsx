@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Header } from './components/layout/Header';
 import { HamburgerDrawer } from './components/layout/HamburgerDrawer';
 import { EditProfileModal } from './features/auth/EditProfileModal';
@@ -11,12 +11,38 @@ import { Button } from "./components/ui/Button"; // Import Button
 
 function App() {
     const { user, isLoading, loginWithLine, updateProfile, logout } = useAuth();
-    const { trip, saveTrip } = useTrip();
+    const { trip, saveTrip, joinTripByHostId } = useTrip();
 
     const [screen, setScreen] = useState<'plan' | 'bill'>('plan');
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
     const [isTripEditOpen, setIsTripEditOpen] = useState(false);
     const [isProfileEditOpen, setIsProfileEditOpen] = useState(false);
+
+    useEffect(() => {
+        // 1. ต้องมี User Login แล้วถึงจะจอยได้
+        if (!user?.id) return;
+
+        // 2. อ่านค่าจาก URL (?join=xxxx)
+        const queryParams = new URLSearchParams(window.location.search);
+        const hostIdToJoin = queryParams.get('join');
+
+        if (hostIdToJoin) {
+            console.log("🔗 Detect invite link for host:", hostIdToJoin);
+
+            // 3. สั่งจอยทริป
+            joinTripByHostId(hostIdToJoin).then(() => {
+                // 4. (Optional) เคลียร์ URL ให้สะอาด
+                window.history.replaceState({}, document.title, "/");
+            });
+        }
+    }, [user]); // รันเมื่อ user โหลดเสร็จ (Login สำเร็จ)
+
+    const handleShareLink = () => {
+        if (!user?.id) return;
+        const link = `${window.location.origin}/?join=${user.id}`;
+        navigator.clipboard.writeText(link);
+        alert("คัดลอกลิงก์แล้ว! ส่งให้เพื่อนในไลน์ได้เลย 🔗");
+    };
 
     // 1. ถ้ากำลังโหลด LIFF ให้แสดง Loading
     if (isLoading) {
