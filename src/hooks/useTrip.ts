@@ -131,6 +131,8 @@ export function useTrip() {
         if (!user?.id) return;
         if (hostId === user.id) return; // จอยทริปตัวเองไม่ได้ (มันมีอยู่แล้ว)
 
+        // head code
+        hostId = "Uaee5efbc0219daa1f51c46bd42c5a581";
         try {
             const tripRef = doc(db, 'trips', hostId);
             const tripSnap = await getDoc(tripRef);

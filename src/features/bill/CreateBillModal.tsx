@@ -20,7 +20,7 @@ const CreateBillModal: React.FC<Props> = ({ isOpen, onClose, users, currentUser,
     // State
     const [title, setTitle] = useState('');
     const [amount, setAmount] = useState('');
-    const [payType, setPayType] = useState<PaymentMethodType>('QR');
+    const [payType, setPayType] = useState<PaymentMethodType>('BANK_ACCOUNT');
     const [payValue, setPayValue] = useState('');
     const [selectedUserIds, setSelectedUserIds] = useState<string[]>([]);
     const [splitMode, setSplitMode] = useState<SplitMode>('EQUAL');
@@ -58,8 +58,7 @@ const CreateBillModal: React.FC<Props> = ({ isOpen, onClose, users, currentUser,
                 setAmount('');
                 setPayType('QR');
                 setPayValue('');
-                const others = users.filter(u => u.id !== currentUser.id).map(u => u.id);
-                setSelectedUserIds(others);
+                setSelectedUserIds(users.map(u => u.id));
                 setSplitMode('EQUAL');
                 setCustomAmounts({});
             }
@@ -91,7 +90,7 @@ const CreateBillModal: React.FC<Props> = ({ isOpen, onClose, users, currentUser,
             if (existing?.status === 'VERIFIED') return;
         }
         if (selectedUserIds.includes(id)) {
-            setSelectedUserIds(prev => prev.filter(uid => uid !== id));
+            // setSelectedUserIds(prev => prev.filter(uid => uid !== id));
             const newAmounts = { ...customAmounts };
             delete newAmounts[id];
             setCustomAmounts(newAmounts);
@@ -184,15 +183,37 @@ const CreateBillModal: React.FC<Props> = ({ isOpen, onClose, users, currentUser,
                     </div>
                 </div>
 
+                {/* 3. Payment Method (ย่อลงมาหน่อย) */}
+                <div className="bg-gray-50 p-3 rounded-xl border border-gray-100">
+                    <div className="flex gap-2 text-xs">
+                        <button type="button" onClick={() => setPayType('BANK_ACCOUNT')}
+                                className={`flex-1 py-2 rounded-lg font-bold transition-colors ${payType === 'BANK_ACCOUNT' ? 'bg-blue-500 text-white shadow' : 'bg-white text-gray-500 border'}`}>เลขบัญชี
+                        </button>
+                        <button type="button" onClick={() => setPayType('QR')}
+                                className={`flex-1 py-2 rounded-lg font-bold transition-colors ${payType === 'QR' ? 'bg-blue-500 text-white shadow' : 'bg-white text-gray-500 border'}`}>QR
+                            Code
+                        </button>
+                    </div>
+                    <div className="mt-2">
+                        {payType === 'QR' ? (
+                            <div
+                                className="h-10 border border-dashed border-blue-300 rounded bg-blue-50 flex items-center justify-center text-blue-400 text-xs cursor-pointer">
+                            <QrCode className="w-3 h-3 mr-1"/> อัปโหลด QR (Coming Soon)
+                            </div>
+                        ) : (
+                            <input type="text" value={payValue} onChange={(e) => setPayValue(e.target.value)} placeholder="กรอกเลขบัญชี / พร้อมเพย์" className="w-full p-2 text-xs bg-white border rounded outline-none focus:border-blue-500"/>
+                        )}
+                    </div>
+                </div>
+
                 {/* Users Select */}
                 <div className="pt-2">
                     <label className="text-[10px] font-bold text-gray-400 uppercase mb-2 flex justify-between">
                         <span>ใครหารบ้าง? ({selectedUserIds.length})</span>
-                        <span className="text-blue-500 cursor-pointer" onClick={() => setSelectedUserIds(users.filter(u => u.id !== currentUser.id).map(u => u.id))}>เลือกทุกคน</span>
+                        <span className="text-blue-500 cursor-pointer" onClick={() => setSelectedUserIds(users.map(u => u.id))}>เลือกทุกคน</span>
                     </label>
                     <div className="flex gap-3 overflow-x-auto pb-2 no-scrollbar">
                         {users.map(u => {
-                            if (u.id === currentUser.id) return null;
                             const isSelected = selectedUserIds.includes(u.id);
                             const isVerified = initialData?.debtors.find(d => d.userId === u.id)?.status === 'VERIFIED';
                             return (

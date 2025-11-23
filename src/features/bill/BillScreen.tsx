@@ -51,7 +51,7 @@ const BillScreen: React.FC<BillScreenProps> = ({ user }) => {
                     userId: d.userId,
                     amount: d.amount,
                     status: status,
-                    slipUrl: existing?.slipUrl
+                    slipUrl: existing?.slipUrl || ''
                 };
             });
         };
@@ -81,7 +81,7 @@ const BillScreen: React.FC<BillScreenProps> = ({ user }) => {
             setIsModalOpen(false);
             setEditingBill(null);
         } catch (e) {
-            alert("บันทึกบิลไม่สำเร็จ T_T");
+            console.log(e);
         }
     };
 
