@@ -39,3 +39,4 @@ jobs:
 
           # (Optional) ถ้าคุณตั้งค่า Hosting ให้ deploy ไปที่โฟลเดอร์ dist
           entryPoint: ./
+          channelId: live
