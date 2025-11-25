@@ -58,8 +58,11 @@ export const PlanScreen: React.FC<PlanScreenProps> = ({trip}) => {
     const [isActivityModalOpen, setIsActivityModalOpen] = useState(false);
     const [isTripModalOpen, setIsTripModalOpen] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [isDeleteDayModalOpen, setIsDeleteDayModalOpen] = useState(false);
     const [editingActivity, setEditingActivity] = useState<Activity | null>(null);
     const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
+    const [deleteDayTargetId, setDeleteDayTargetId] = useState<number | null>(null);
+
 
     // คำนวณ Days Array จาก trip.totalDays (ถ้าไม่มีให้เริ่มที่ 1 วัน)
     const totalDays = trip.totalDays || 1;
@@ -79,10 +82,14 @@ export const PlanScreen: React.FC<PlanScreenProps> = ({trip}) => {
         await saveTrip({...trip, totalDays: totalDays + 1});
     };
 
-    const handleDeleteDay = async (dayId: number) => {
-        if (totalDays <= 1) return;
-        if (!confirm(`ต้องการลบ Day ${dayId} และกิจกรรมในวันนี้?`)) return;
+    const openDeleteDay = (dayId: number) => {
+        setDeleteDayTargetId(dayId);
+        setIsDeleteDayModalOpen(true);
+    }
 
+    const handleDeleteDay = async () => {
+        const dayId = deleteDayTargetId;
+        setDeleteTargetId(null);
         // 1. ลบกิจกรรมทั้งหมดในวันนั้น
         const actsToDelete = activities.filter(a => a.day === dayId);
         for (const act of actsToDelete) {
@@ -95,6 +102,7 @@ export const PlanScreen: React.FC<PlanScreenProps> = ({trip}) => {
             await updateActivity(act.id, {day: act.day - 1});
         }
 
+        if (totalDays <= 1) return;
         // 3. อัปเดตจำนวนวันรวม
         await saveTrip({...trip, totalDays: totalDays - 1});
 
@@ -139,6 +147,7 @@ export const PlanScreen: React.FC<PlanScreenProps> = ({trip}) => {
             setDeleteTargetId(null);
         }
     };
+
 
     // ✅ ฟังก์ชันที่แก้ไข: เพิ่ม async
     const handleDragActivityEnd = async (event: DragEndEvent) => {
@@ -224,35 +233,35 @@ export const PlanScreen: React.FC<PlanScreenProps> = ({trip}) => {
                 <div className="relative">
                     {isEditMode ? (
                         // Edit Mode (เพิ่ม/ลบ วัน)
-                        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragDayEnd}>
-                            <SortableContext items={days} strategy={rectSortingStrategy}>
-                                <div className="flex flex-wrap gap-2 py-1">
-                                    {days.map((dayId, index) => (
-                                        <SortableItem key={dayId} id={dayId} className="">
-                                            <div className="relative group">
-                                                <button
-                                                    className="px-5 py-2 rounded-xl text-sm font-bold whitespace-nowrap border border-green-200 bg-green-50 text-green-700 cursor-grab active:cursor-grabbing">
-                                                    D-{dayId}
-                                                </button>
-                                                <button
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        handleDeleteDay(dayId);
-                                                    }}
-                                                    className="absolute -top-1.5 -right-1.5 bg-red-500 text-white rounded-full p-0.5 shadow-sm hover:bg-red-600 z-20"
-                                                >
-                                                    <X className="w-3 h-3"/>
-                                                </button>
-                                            </div>
-                                        </SortableItem>
-                                    ))}
-                                    <button onClick={handleAddDay}
-                                            className="w-10 h-9 flex-shrink-0 flex items-center justify-center bg-white rounded-xl text-green-500 border border-dashed border-green-300 hover:bg-green-50 transition-colors">
-                                        <Plus className="w-4 h-4"/>
-                                    </button>
-                                </div>
-                            </SortableContext>
-                        </DndContext>
+                        // <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragDayEnd}>
+                        <SortableContext items={days} strategy={rectSortingStrategy}>
+                            <div className="flex flex-wrap gap-2 py-1">
+                                {days.map((dayId, index) => (
+                                    <SortableItem key={dayId} id={dayId} className="">
+                                        <div className="relative group">
+                                            <button
+                                                className="px-5 py-2 rounded-xl text-sm font-bold whitespace-nowrap border border-green-200 bg-green-50 text-green-700 cursor-grab active:cursor-grabbing">
+                                                D-{dayId}
+                                            </button>
+                                            <button
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    openDeleteDay(dayId);
+                                                }}
+                                                className="absolute -top-1.5 -right-1.5 bg-red-500 text-white rounded-full p-0.5 shadow-sm hover:bg-red-600 z-20"
+                                            >
+                                                <X className="w-3 h-3"/>
+                                            </button>
+                                        </div>
+                                    </SortableItem>
+                                ))}
+                                <button onClick={handleAddDay}
+                                        className="w-10 h-9 flex-shrink-0 flex items-center justify-center bg-white rounded-xl text-green-500 border border-dashed border-green-300 hover:bg-green-50 transition-colors">
+                                    <Plus className="w-4 h-4"/>
+                                </button>
+                            </div>
+                        </SortableContext>
+                        // </DndContext>
                     ) : (
                         // View Mode
                         <div
@@ -278,23 +287,24 @@ export const PlanScreen: React.FC<PlanScreenProps> = ({trip}) => {
             </div>
 
             {/* Content List */}
-            <div className="flex-1 overflow-y-auto custom-scrollbar px-4 pb-24 relative">
-                <div className="space-y-3 min-h-[100px] pt-2">
-                    {currentActivities.length === 0 ? (
-                        <div className="flex flex-col items-center justify-center py-20 mt-4 opacity-60">
-                            <MapPin className="w-10 h-10 text-gray-300 mb-2"/>
-                            <p className="text-xs text-gray-400">Day {activeDay} ยังว่างอยู่</p>
-                            <button onClick={() => {
-                                setEditingActivity(null);
-                                setIsActivityModalOpen(true);
-                            }}
-                                    className="mt-4 text-green-600 text-sm font-bold flex items-center gap-1 hover:underline">
-                                <Plus className="w-4 h-4"/> เพิ่มกิจกรรมแรก
-                            </button>
-                        </div>
-                    ) : (
-                        <DndContext sensors={sensors} collisionDetection={closestCenter}
-                                    onDragEnd={handleDragActivityEnd}>
+            {!isEditMode && (
+                <div className="flex-1 overflow-y-auto custom-scrollbar px-4 pb-24 relative">
+                    <div className="space-y-3 min-h-[100px] pt-2">
+                        {currentActivities.length === 0 ? (
+                            <div className="flex flex-col items-center justify-center py-20 mt-4 opacity-60">
+                                <MapPin className="w-10 h-10 text-gray-300 mb-2"/>
+                                <p className="text-xs text-gray-400">Day {activeDay} ยังว่างอยู่</p>
+                                <button onClick={() => {
+                                    setEditingActivity(null);
+                                    setIsActivityModalOpen(true);
+                                }}
+                                        className="mt-4 text-green-600 text-sm font-bold flex items-center gap-1 hover:underline">
+                                    <Plus className="w-4 h-4"/> เพิ่มกิจกรรมแรก
+                                </button>
+                            </div>
+                        ) : (
+                            // <DndContext sensors={sensors} collisionDetection={closestCenter}
+                            //             onDragEnd={handleDragActivityEnd}>
                             <SortableContext items={currentActivities.map(a => a.id)}
                                              strategy={verticalListSortingStrategy}>
                                 {currentActivities.map((item) => (
@@ -304,9 +314,9 @@ export const PlanScreen: React.FC<PlanScreenProps> = ({trip}) => {
                                             setIsActivityModalOpen(true);
                                         }}
                                              className="bg-white p-3 rounded-2xl shadow-sm border border-gray-100 flex gap-3 items-start group cursor-pointer hover:border-green-200 active:scale-[0.98] transition-all">
-                                            <div
-                                                className="mt-2 text-gray-300 cursor-grab active:cursor-grabbing p-1 -ml-2">
-                                                <GripVertical className="w-4 h-4"/></div>
+                                            {/*<div*/}
+                                            {/*    className="mt-2 text-gray-300 cursor-grab active:cursor-grabbing p-1 -ml-2">*/}
+                                            {/*    <GripVertical className="w-4 h-4"/></div>*/}
 
                                             {/* Time */}
                                             <div
@@ -358,12 +368,12 @@ export const PlanScreen: React.FC<PlanScreenProps> = ({trip}) => {
                                     </SortableItem>
                                 ))}
                             </SortableContext>
-                        </DndContext>
-                    )}
-                    <div className="h-20"></div>
+                            // </DndContext>
+                        )}
+                        <div className="h-20"></div>
+                    </div>
                 </div>
-            </div>
-
+            )}
             {/* Floating Action Button */}
             {isTripSetup && !isEditMode && (
                 <button onClick={() => {
@@ -378,6 +388,13 @@ export const PlanScreen: React.FC<PlanScreenProps> = ({trip}) => {
                            onSave={handleSaveActivity} initialData={editingActivity}/>
             <ConfirmModal isOpen={isDeleteModalOpen} onClose={() => setIsDeleteModalOpen(false)}
                           onConfirm={handleConfirmDelete} title="ลบกิจกรรม?" message="เอาจริงดิ?"/>
+            <ConfirmModal
+                isOpen={isDeleteDayModalOpen}
+                onClose={() => setIsDeleteDayModalOpen(false)}
+                onConfirm={handleDeleteDay}
+                title="ลบวัน?"
+                message={`จะการลบ D-${deleteDayTargetId} และกิจกรรมในวันนี้นะ?`}
+            />
         </div>
     );
 };

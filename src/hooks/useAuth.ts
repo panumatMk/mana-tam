@@ -1,8 +1,8 @@
-import { useState, useEffect, useRef } from 'react';
+import {useState, useEffect, useRef} from 'react';
 import liff from '@line/liff';
-import { doc, setDoc, serverTimestamp } from 'firebase/firestore'; // ✅ เพิ่ม Firestore
-import { db } from '../config/firebase';
-import type { User } from '../types/user.types';
+import {doc, setDoc, serverTimestamp} from 'firebase/firestore'; // ✅ เพิ่ม Firestore
+import {db} from '../config/firebase';
+import type {User} from '../types/user.types';
 
 const STORAGE_KEY = 'travelApp_user';
 const LIFF_ID = import.meta.env.VITE_LIFF_ID || "";
@@ -20,13 +20,16 @@ export function useAuth() {
             try {
                 if (!LIFF_ID) throw new Error("VITE_LIFF_ID is missing");
 
-                await liff.init({ liffId: LIFF_ID });
+                await liff.init({liffId: LIFF_ID});
 
                 if (liff.isLoggedIn()) {
                     const profile = await liff.getProfile();
+                    const context = await liff.getContext();
                     const lineUser: User = {
                         id: profile.userId,
                         name: profile.displayName,
+                        groupIds: context?.groupId ? [context.groupId] : [],
+                        roomIds: context?.roomId ? [context.roomId] : [],
                         avatar: profile.pictureUrl || 'https://api.dicebear.com/9.x/micah/svg?seed=Default'
                     };
 
@@ -40,7 +43,7 @@ export function useAuth() {
                         ...lineUser,
                         lastLoginAt: serverTimestamp(),
                         // ถ้าเป็นการสร้างครั้งแรกให้ใส่ createdAt ด้วย (Firestore จัดการ merge ให้)
-                    }, { merge: true });
+                    }, {merge: true});
 
                 } else {
                     liff.login(); // บังคับ Login เลยถ้ายูสเซอร์กดลิงก์เข้ามา

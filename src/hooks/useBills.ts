@@ -6,17 +6,18 @@ import { db } from '../config/firebase';
 // ❌ ลบ import { useAuth } ... ออก
 import type { BillItem } from '../types/bill.types';
 import {MOCKGROUPID} from "../config/constants.ts";
+import type {User} from "../types/user.types.ts";
 
 // ✅ รับ userId เข้ามาเป็น Argument
-export function useBills(userId?: string) {
+export function useBills(groupId?: string, user: User) {
     const [bills, setBills] = useState<BillItem[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
     // 1. Realtime Listener
     useEffect(() => {
-        if (!userId) return; // เช็ค userId ที่รับมา
+        if (!groupId) return; // เช็ค userId ที่รับมา
 
-        const billsRef = collection(db, 'trips', MOCKGROUPID, 'bills');
+        const billsRef = collection(db, 'trips', groupId, 'bills');
         const q = query(billsRef, orderBy('createdAt', 'desc'));
 
         const unsubscribe = onSnapshot(q, (snapshot) => {
@@ -30,20 +31,21 @@ export function useBills(userId?: string) {
         });
 
         return () => unsubscribe();
-    }, [userId]);
+    }, [groupId]);
 
     // 2. Add Bill
     const addBill = async (billData: Omit<BillItem, 'id' | 'createdAt' | 'updatedAt'>) => {
-        if (!userId) return;
+        if (!groupId) return;
         try {
-            const billsRef = collection(db, 'trips', MOCKGROUPID, 'bills');
+            const billsRef = collection(db, 'trips', groupId, 'bills');
             await addDoc(billsRef, {
                 ...billData,
                 createdAt: serverTimestamp(),
                 updatedAt: serverTimestamp(),
-                createdBy: userId,
-                // createdByName: ... (ถ้าจะเก็บชื่อ ต้องส่ง name มาด้วย หรือเอาแค่ ID ไปก่อน)
-                updatedBy: userId,
+                createdBy: user.id,
+                createdByName: user.name,
+                updatedBy: user.id,
+                updatedByName: user.name
             });
         } catch (error) {
             console.error("Error adding bill:", error);
@@ -53,15 +55,16 @@ export function useBills(userId?: string) {
 
     // 3. Update Bill
     const updateBill = async (billId: string, updateData: Partial<BillItem>) => {
-        if (!userId) return;
+        if (!groupId) return;
         try {
-            const billRef = doc(db, 'trips', userId, 'bills', billId);
+            const billRef = doc(db, 'trips', groupId, 'bills', billId);
             const { id, createdAt, createdBy, ...data } = updateData as any;
 
             await updateDoc(billRef, {
                 ...data,
                 updatedAt: serverTimestamp(),
-                updatedBy: userId,
+                updatedBy: user.id,
+                updatedByName: user.name
             });
         } catch (error) {
             console.error("Error updating bill:", error);
@@ -71,9 +74,9 @@ export function useBills(userId?: string) {
 
     // 4. Delete Bill
     const deleteBill = async (billId: string) => {
-        if (!userId) return;
+        if (!groupId) return;
         try {
-            await deleteDoc(doc(db, 'trips', userId, 'bills', billId));
+            await deleteDoc(doc(db, 'trips', groupId, 'bills', billId));
         } catch (error) {
             console.error("Error deleting bill:", error);
             throw error;

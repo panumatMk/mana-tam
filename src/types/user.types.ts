@@ -2,6 +2,8 @@ export interface User {
     id: string;
     name: string;
     avatar: string;
+    roomIds?: string[];
+    groupIds?: string[];
 
     // ✨ Audit Fields
     createdAt?: any;

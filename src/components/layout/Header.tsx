@@ -111,12 +111,12 @@ export const Header: React.FC<Props> = ({
         <div className="flex-none bg-white p-2 shadow-sm z-20 transition-all duration-300 px-5">
             <div className="flex justify-between items-start mb-2">
                 <div className="flex items-center gap-3">
-                    <button
-                        onClick={onMenuClick}
-                        className="p-2 -ml-2 text-gray-600 hover:bg-gray-100 rounded-full transition-colors"
-                    >
-                        <Menu className="w-6 h-6"/>
-                    </button>
+                    {/*<button*/}
+                    {/*    onClick={onMenuClick}*/}
+                    {/*    className="p-2 -ml-2 text-gray-600 hover:bg-gray-100 rounded-full transition-colors"*/}
+                    {/*>*/}
+                    {/*    /!*<Menu className="w-6 h-6"/>*!/*/}
+                    {/*</button>*/}
 
                     {/* Title & Edit Button */}
                     <div className="flex flex-col">
